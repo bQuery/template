@@ -41,22 +41,26 @@ function renderTodos() {
     const li = document.createElement('li');
     li.className = todo.done ? 'done' : '';
 
-    const span = document.createElement('span');
-    span.textContent = todo.text;
-    span.style.cursor = 'pointer';
-    span.addEventListener('click', () => {
+    const toggleButton = document.createElement('button');
+    toggleButton.type = 'button';
+    toggleButton.textContent = todo.text;
+    toggleButton.setAttribute('aria-label', `Toggle todo "${todo.text}"`);
+    toggleButton.setAttribute('aria-pressed', String(todo.done));
+    toggleButton.addEventListener('click', () => {
       todos.value = todos.value.map((t) =>
         t.id === todo.id ? { ...t, done: !t.done } : t
       );
     });
 
     const removeBtn = document.createElement('button');
+    removeBtn.type = 'button';
     removeBtn.textContent = '✕';
+    removeBtn.setAttribute('aria-label', `Remove todo "${todo.text}"`);
     removeBtn.addEventListener('click', () => {
       todos.value = todos.value.filter((t) => t.id !== todo.id);
     });
 
-    li.appendChild(span);
+    li.appendChild(toggleButton);
     li.appendChild(removeBtn);
     list.appendChild(li);
   }
