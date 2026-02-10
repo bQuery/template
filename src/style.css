@@ -132,20 +132,28 @@ button:hover {
   border-bottom: none;
 }
 
-#todo-list li.done span {
+#todo-list li.done button {
   text-decoration: line-through;
   color: var(--color-text-muted);
 }
 
-#todo-list button {
+#todo-list li button {
   background: transparent;
   color: var(--color-text-muted);
   padding: 0.25rem 0.5rem;
   font-size: 0.75rem;
 }
 
-#todo-list button:hover {
+#todo-list li button:hover {
+  background: transparent;
+}
+
+#todo-list li button:last-of-type:hover {
   color: #ef4444;
+}
+
+#todo-list li button:not(:last-of-type):hover {
+  color: var(--color-text-muted);
 }
 
 /* Footer */
