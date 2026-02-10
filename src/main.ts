@@ -36,10 +36,17 @@ function renderTodos() {
   const list = document.querySelector('#todo-list');
   if (!list) return;
 
+  const focused = document.activeElement;
+  const focusedId = focused?.closest('li')?.dataset.todoId;
+  const focusedIsRemove =
+    focused instanceof HTMLButtonElement &&
+    focused.dataset.action === 'remove';
+
   list.innerHTML = '';
   for (const todo of todos.value) {
     const li = document.createElement('li');
     li.className = todo.done ? 'done' : '';
+    li.dataset.todoId = String(todo.id);
 
     const toggleButton = document.createElement('button');
     toggleButton.type = 'button';
@@ -55,6 +62,7 @@ function renderTodos() {
     const removeBtn = document.createElement('button');
     removeBtn.type = 'button';
     removeBtn.textContent = '✕';
+    removeBtn.dataset.action = 'remove';
     removeBtn.setAttribute('aria-label', `Remove todo "${todo.text}"`);
     removeBtn.addEventListener('click', () => {
       todos.value = todos.value.filter((t) => t.id !== todo.id);
@@ -63,6 +71,16 @@ function renderTodos() {
     li.appendChild(toggleButton);
     li.appendChild(removeBtn);
     list.appendChild(li);
+  }
+
+  if (focusedId) {
+    const target = list.querySelector(`li[data-todo-id="${focusedId}"]`);
+    if (target) {
+      const btn = focusedIsRemove
+        ? target.querySelector<HTMLButtonElement>('button[data-action="remove"]')
+        : target.querySelector<HTMLButtonElement>('button:first-of-type');
+      btn?.focus();
+    }
   }
 }
 
