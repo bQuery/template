@@ -144,7 +144,7 @@ button:hover {
   border-bottom: none;
 }
 
-#todo-list li.done button {
+#todo-list li.done button:first-of-type {
   text-decoration: line-through;
   color: var(--color-text-muted);
 }

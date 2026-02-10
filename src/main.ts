@@ -75,12 +75,20 @@ function renderTodos() {
 
   if (focusedId) {
     const target = list.querySelector(`li[data-todo-id="${focusedId}"]`);
+    let btn: HTMLButtonElement | null = null;
+
     if (target) {
-      const btn = focusedIsRemove
+      btn = focusedIsRemove
         ? target.querySelector<HTMLButtonElement>('button[data-action="remove"]')
         : target.querySelector<HTMLButtonElement>('button:first-of-type');
-      btn?.focus();
+    } else {
+      const fallbackItem = list.querySelector<HTMLLIElement>('li');
+      if (fallbackItem) {
+        btn = fallbackItem.querySelector<HTMLButtonElement>('button:first-of-type');
+      }
     }
+
+    btn?.focus();
   }
 }
 
