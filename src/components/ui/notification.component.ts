@@ -11,7 +11,12 @@
  * ```
  */
 
-import { component, html, mergeStyles } from '../base/base.component';
+import {
+  component,
+  html,
+  mergeStyles,
+  reportComponentError,
+} from '../base/base.component';
 
 const NOTIFICATION_STYLES = mergeStyles(`
   .notification {
@@ -102,8 +107,16 @@ component<{
   },
   styles: NOTIFICATION_STYLES,
 
+  beforeMount() {
+    /* Notification is about to mount. */
+  },
+
+  beforeUpdate() {
+    return true;
+  },
+
   onError(error: Error) {
-    console.error('[ui-notification] Render error:', error.message);
+    reportComponentError('ui-notification', error);
   },
 
   render({ props, emit }) {

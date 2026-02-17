@@ -181,5 +181,64 @@ export async function popElement(element: Element): Promise<void> {
   });
 }
 
+/**
+ * Run a FLIP-style animation for reflowed list items.
+ *
+ * This helper captures each item's pre-update position, waits for the next
+ * frame, then animates items from their old offset into their new position.
+ *
+ * @param containerSelector - CSS selector of the list container.
+ * @param itemSelector - CSS selector for animated child elements.
+ */
+export function runFlipAnimation(
+  containerSelector: string,
+  itemSelector = '[data-flip-key]'
+): void {
+  const container = document.querySelector(containerSelector);
+  if (!container) return;
+
+  const initialRects = new Map<string, DOMRect>();
+  const initialElements = Array.from(
+    container.querySelectorAll<HTMLElement>(itemSelector)
+  );
+
+  initialElements.forEach((element) => {
+    const key = element.dataset.flipKey;
+    if (!key) return;
+    initialRects.set(key, element.getBoundingClientRect());
+  });
+
+  requestAnimationFrame(() => {
+    const finalElements = Array.from(
+      container.querySelectorAll<HTMLElement>(itemSelector)
+    );
+
+    finalElements.forEach((element) => {
+      const key = element.dataset.flipKey;
+      if (!key) return;
+
+      const initial = initialRects.get(key);
+      if (!initial) return;
+
+      const final = element.getBoundingClientRect();
+      const deltaX = initial.left - final.left;
+      const deltaY = initial.top - final.top;
+
+      if (deltaX === 0 && deltaY === 0) return;
+
+      element.animate(
+        [
+          { transform: `translate(${deltaX}px, ${deltaY}px)` },
+          { transform: 'translate(0, 0)' },
+        ],
+        {
+          duration: 220,
+          easing: 'cubic-bezier(0.2, 0, 0, 1)',
+        }
+      );
+    });
+  });
+}
+
 // Re-export Spring type for consumers that need to type their own variables.
 export type { Spring };

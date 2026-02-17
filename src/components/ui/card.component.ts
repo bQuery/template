@@ -13,7 +13,12 @@
  * ```
  */
 
-import { component, html, mergeStyles } from '../base/base.component';
+import {
+  component,
+  html,
+  mergeStyles,
+  reportComponentError,
+} from '../base/base.component';
 
 const CARD_STYLES = mergeStyles(`
   .card {
@@ -70,8 +75,16 @@ component<{
   },
   styles: CARD_STYLES,
 
+  beforeMount() {
+    /* Card is about to mount. */
+  },
+
+  beforeUpdate() {
+    return true;
+  },
+
   onError(error: Error) {
-    console.error('[ui-card] Render error:', error.message);
+    reportComponentError('ui-card', error);
   },
 
   render({ props }) {

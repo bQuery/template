@@ -13,7 +13,12 @@
  * ```
  */
 
-import { component, html, mergeStyles } from '../base/base.component';
+import {
+  component,
+  html,
+  mergeStyles,
+  reportComponentError,
+} from '../base/base.component';
 
 const MODAL_STYLES = mergeStyles(`
   .backdrop {
@@ -115,12 +120,20 @@ component<{
   },
   styles: MODAL_STYLES,
 
+  beforeMount() {
+    /* Modal is about to mount. */
+  },
+
+  beforeUpdate() {
+    return true;
+  },
+
   connected() {
     /* Modal connected — keyboard listener attached via render */
   },
 
   onError(error: Error) {
-    console.error('[ui-modal] Render error:', error.message);
+    reportComponentError('ui-modal', error);
   },
 
   render({ props, emit }) {

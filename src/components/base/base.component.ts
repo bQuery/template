@@ -70,3 +70,23 @@ export function emitEvent(
     })
   );
 }
+
+/**
+ * Report a component error without logging to the browser console.
+ *
+ * @param componentName - Name of the component that failed.
+ * @param error - The thrown error instance.
+ */
+export function reportComponentError(
+  componentName: string,
+  error: Error
+): void {
+  window.dispatchEvent(
+    new CustomEvent('component-error', {
+      detail: {
+        componentName,
+        message: error.message,
+      },
+    })
+  );
+}

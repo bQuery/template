@@ -11,16 +11,44 @@
     <title>bQuery Template</title>
   </head>
   <body>
-    <!-- App Shell — provides navbar + main content area -->
-    <app-shell>
-      <app-navbar slot="navbar"></app-navbar>
+    <div id="app">
+      <!-- App Shell — provides navbar + main content area -->
+      <app-shell>
+        <app-navbar slot="navbar"></app-navbar>
 
-      <!-- Router outlet — pages are rendered here -->
-      <div id="router-outlet"></div>
+        <!-- Root directive demo (index.html-level bQuery bindings) -->
+        <section class="px-4 py-2 text-xs text-gray-500 dark:text-gray-400">
+          <p>
+            Route: <span bq-text="routePath"></span>
+            <span bq-if="isAuthenticated">· Authenticated</span>
+          </p>
+          <div class="mt-1">
+            <label class="sr-only" for="global-filter">Quick filter</label>
+            <input
+              id="global-filter"
+              bq-model="globalFilter"
+              placeholder="Quick filter"
+              class="w-full sm:w-64 rounded border border-gray-300 px-2 py-1 text-xs dark:border-gray-700 dark:bg-gray-900"
+            />
+          </div>
+          <ul class="mt-1 flex flex-wrap gap-2">
+            <template bq-for="item in quickLinks">
+              <li
+                bq-class="{ 'font-semibold text-indigo-500': item.path === routePath }"
+              >
+                <a bq-bind:href="item.path" bq-text="item.label"></a>
+              </li>
+            </template>
+          </ul>
+        </section>
 
-      <!-- Notification stack -->
-      <div id="notification-stack" slot="notifications"></div>
-    </app-shell>
+        <!-- Router outlet — pages are rendered here -->
+        <div id="router-outlet"></div>
+
+        <!-- Notification stack -->
+        <div id="notification-stack" slot="notifications"></div>
+      </app-shell>
+    </div>
 
     <!-- Application entry point -->
     <script type="module" src="/src/main.ts"></script>

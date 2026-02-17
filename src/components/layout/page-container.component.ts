@@ -13,7 +13,12 @@
  * ```
  */
 
-import { component, html, mergeStyles } from '../base/base.component';
+import {
+  component,
+  html,
+  mergeStyles,
+  reportComponentError,
+} from '../base/base.component';
 
 const CONTAINER_STYLES = mergeStyles(`
   .container {
@@ -32,6 +37,18 @@ const CONTAINER_STYLES = mergeStyles(`
 
 component('page-container', {
   styles: CONTAINER_STYLES,
+
+  beforeMount() {
+    /* Layout container is about to mount. */
+  },
+
+  beforeUpdate() {
+    return true;
+  },
+
+  onError(error: Error) {
+    reportComponentError('page-container', error);
+  },
 
   render() {
     return html`

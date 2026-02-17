@@ -8,7 +8,7 @@
 
 import { createAuthGuard } from '@/guards/auth.guard';
 import { transition } from '@bquery/bquery/motion';
-import { createRouter, type Router } from '@bquery/bquery/router';
+import { createRouter, type Route, type Router } from '@bquery/bquery/router';
 
 // Page renderers — lazy-loaded via dynamic import for code-splitting
 const pageModules = {
@@ -99,8 +99,7 @@ export function setupRouter(): Router {
   // Register the authentication guard
   router.beforeEach(createAuthGuard());
 
-  // Render pages on route changes
-  router.afterEach(async (to) => {
+  const renderRoute = async (to: Route): Promise<void> => {
     const outlet = getOutlet();
 
     // Use View Transitions for smooth page changes
@@ -128,7 +127,15 @@ export function setupRouter(): Router {
           "<p class='p-8 text-red-500'>Failed to load page.</p>";
       }
     });
+  };
+
+  // Render pages on route changes
+  router.afterEach((to) => {
+    void renderRoute(to);
   });
+
+  // Initial render for first page load (createRouter syncs route but does not fire afterEach)
+  void renderRoute(router.currentRoute.value);
 
   return router;
 }

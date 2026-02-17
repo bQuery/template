@@ -1,3 +1,10 @@
+/**
+ * @file Global application store.
+ *
+ * Provides shared UI state for theme, loading indicator, and
+ * notification queue handling.
+ */
+
 import type { AppNotification, Theme } from '@/types';
 import { createStore } from '@bquery/bquery/store';
 
@@ -78,12 +85,14 @@ export const appStore = createStore<AppState, AppGetters, AppActions>({
 
     removeNotification(id: string) {
       this.notifications = (this.notifications as AppNotification[]).filter(
-        (n: AppNotification) => n.id !== id,
+        (n: AppNotification) => n.id !== id
       );
     },
 
     clearNotifications() {
       this.notifications = [];
     },
+    // NOTE: bQuery currently types `this` in actions dynamically at runtime.
+    // This cast is limited to store action typing interop.
   } as any,
 });

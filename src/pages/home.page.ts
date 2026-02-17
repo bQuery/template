@@ -11,8 +11,15 @@
 import { counterStore } from '@/stores/counter.store';
 import { setPageTitle } from '@/utils/dom.utils';
 import { sanitizeUserContent } from '@/utils/sanitize.utils';
+import { $, $$ } from '@bquery/bquery/core';
 import { spring, springPresets } from '@bquery/bquery/motion';
-import { computed, signal } from '@bquery/bquery/reactive';
+import {
+  batch,
+  computed,
+  readonly,
+  signal,
+  watch,
+} from '@bquery/bquery/reactive';
 import { mount } from '@bquery/bquery/view';
 
 /**
@@ -38,6 +45,8 @@ export function renderHomePage(container: HTMLElement): {
 
   /** Whether the greeting input has content. */
   const hasGreeting = computed(() => greetingInput.value.length > 0);
+  const readonlyGreeting = readonly(greetingInput);
+  const lastCounterChange = signal('No counter changes yet.');
 
   // Sync spring to counter value
   counterSpring.onChange(() => {
@@ -119,6 +128,10 @@ export function renderHomePage(container: HTMLElement): {
             >
               <p class="text-sm text-gray-500 dark:text-gray-400 mb-1">Sanitized preview:</p>
               <p bq-html="greetingPreview" class="text-gray-800 dark:text-gray-200"></p>
+              <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                Read-only mirror:
+                <span bq-text="readonlyGreeting"></span>
+              </p>
             </div>
           </div>
         </ui-card>
@@ -150,8 +163,129 @@ export function renderHomePage(container: HTMLElement): {
           </ui-card>
         </div>
       </section>
+
+      <section class="mt-12">
+        <ui-card card-title="bQuery Core API Playground" hoverable>
+          <p class="text-sm mb-3">
+            This section demonstrates core methods: selectors, chaining,
+            events, delegation, wrapping, scroll helpers, and form
+            serialization.
+          </p>
+
+          <div
+            id="core-demo-box"
+            class="rounded border border-dashed border-indigo-300 p-3"
+          >
+            <p id="core-status" class="text-sm">Core demo booting…</p>
+            <p class="text-xs text-gray-500">
+              Last counter event: <span bq-text="lastCounterChange"></span>
+            </p>
+          </div>
+
+          <form id="core-form" class="mt-4 grid gap-2 sm:grid-cols-2">
+            <input
+              type="text"
+              name="firstName"
+              placeholder="First name"
+              class="rounded border border-gray-300 px-2 py-1"
+            />
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              class="rounded border border-gray-300 px-2 py-1"
+            />
+            <button
+              type="button"
+              bq-on:click="serializeCoreForm"
+              class="rounded bg-indigo-600 px-3 py-1 text-white"
+            >
+              Serialize Form
+            </button>
+            <button
+              id="core-native-plus"
+              type="button"
+              class="rounded bg-emerald-600 px-3 py-1 text-white"
+            >
+              Native +5
+            </button>
+          </form>
+
+          <div id="core-serialized" class="mt-3 text-xs"></div>
+
+          <div class="mt-4 flex gap-2">
+            <button
+              type="button"
+              bq-on:click="toggleWrap"
+              class="rounded border border-indigo-500 px-3 py-1 text-indigo-600"
+            >
+              Toggle Wrap
+            </button>
+            <button
+              type="button"
+              bq-on:click="scrollToCards"
+              class="rounded border border-indigo-500 px-3 py-1 text-indigo-600"
+            >
+              Scroll to cards
+            </button>
+          </div>
+
+          <p id="core-wrap-target" class="mt-3 rounded bg-indigo-50 p-2 text-sm">
+            Wrap / unwrap target
+          </p>
+
+          <ul id="core-delegate-list" class="mt-3 flex gap-2 text-xs">
+            <li>
+              <button class="delegate-item rounded bg-gray-100 px-2 py-1" data-item="A">
+                Item A
+              </button>
+            </li>
+            <li>
+              <button class="delegate-item rounded bg-gray-100 px-2 py-1" data-item="B">
+                Item B
+              </button>
+            </li>
+          </ul>
+        </ui-card>
+      </section>
     </page-container>
   `;
+
+  const stopCounterWatch = watch(
+    computed(() => counterStore.count),
+    (next, prev) => {
+      const oldValue = prev ?? 0;
+      lastCounterChange.value = `Counter changed from ${oldValue} to ${next}`;
+    },
+    { immediate: true }
+  );
+
+  const nativePlusHandler = (): void => {
+    batch(() => {
+      counterStore.incrementBy(5);
+      counterSpring.to(counterStore.count);
+    });
+  };
+
+  const delegateHandler = (_event: Event, target: Element): void => {
+    const item = target.getAttribute('data-item') ?? 'unknown';
+    $('#core-status').attr('data-last-item', item);
+    $('#core-status').css({ color: '#4338ca', fontWeight: '600' });
+    $('#core-status').text(`Delegated click on ${item}`);
+  };
+
+  $('#core-native-plus').on('click', nativePlusHandler);
+  $('#core-delegate-list').delegate('click', '.delegate-item', delegateHandler);
+
+  $('#core-status')
+    .addClass('rounded')
+    .addClass('px-2')
+    .addClass('py-1')
+    .css('background-color', '#eef2ff');
+  $('#core-status').attr('data-ready', 'true');
+  $('#core-status').text('Core demo ready');
+
+  $$('.delegate-item').addClass('transition-colors');
 
   const view = mount(container, {
     // Counter store bindings
@@ -166,15 +300,60 @@ export function renderHomePage(container: HTMLElement): {
       counterSpring.to(counterStore.count);
     },
     reset: () => {
-      counterStore.reset();
-      counterSpring.to(0);
+      batch(() => {
+        counterStore.reset();
+        greetingInput.value = '';
+      });
+      counterSpring.to(counterStore.count);
     },
 
     // Two-way binding demo
     greetingInput,
+    readonlyGreeting,
     greetingPreview,
     hasGreeting,
+    lastCounterChange,
+
+    serializeCoreForm: () => {
+      const serializedObject = $('#core-form').serialize();
+      const serializedString = $('#core-form').serializeString();
+
+      $('#core-serialized').html(`
+        <pre class="overflow-auto rounded bg-gray-50 p-2 dark:bg-gray-900">
+${JSON.stringify(serializedObject, null, 2)}
+\n${serializedString}
+        </pre>
+      `);
+    },
+
+    toggleWrap: () => {
+      const wrapTarget = $('#core-wrap-target');
+      const parent = wrapTarget.parent();
+      if (parent?.classList.contains('core-wrapper')) {
+        wrapTarget.unwrap();
+      } else {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'core-wrapper rounded border border-indigo-200 p-2';
+        wrapTarget.wrap(wrapper);
+      }
+    },
+
+    scrollToCards: () => {
+      $('#core-demo-box').scrollTo({ behavior: 'smooth', block: 'center' });
+    },
   });
+
+  const originalDestroy = view.destroy;
+  view.destroy = () => {
+    $('#core-native-plus').off('click', nativePlusHandler);
+    $('#core-delegate-list').undelegate(
+      'click',
+      '.delegate-item',
+      delegateHandler
+    );
+    stopCounterWatch();
+    originalDestroy();
+  };
 
   return view;
 }

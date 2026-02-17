@@ -35,7 +35,7 @@ This project serves as a reference implementation that demonstrates **all 9 bQue
 
 ## Project Structure
 
-```
+```bash
 template/
 ├── index.html                    # Entry HTML
 ├── package.json                  # Dependencies & scripts
@@ -132,6 +132,32 @@ Serves the production build locally.
 
 ## Architecture
 
+### Text-Based Architecture Diagram
+
+```text
+┌───────────────────────────────────────────────────────────────────┐
+│ index.html (#app)                                                 │
+│  └─ <app-shell>                                                   │
+│      ├─ <app-navbar>                                              │
+│      ├─ Root bq-* directive bindings (global route/filter state) │
+│      ├─ #router-outlet                                            │
+│      │   └─ Router renders page modules                           │
+│      │      ├─ Home / About / Dashboard / Login / Settings / 404 │
+│      │      └─ Each page mounts local View context               │
+│      └─ #notification-stack                                       │
+└───────────────────────────────────────────────────────────────────┘
+
+Data flow:
+Services (API/Auth/Storage) → Stores (app/auth/counter/settings)
+→ Pages/Components → View bindings (`bq-*`) → DOM
+
+Cross-cutting concerns:
+- Router + Auth Guard protect private routes
+- Security sanitizes all user HTML input/output
+- Motion handles transitions, springs, and FLIP list animation
+- Platform handles local storage and browser notifications
+```
+
 ### State Management
 
 Stores use `createStore()` (and `createPersistedStore()` for settings) with a clear separation of **state**, **getters**, and **actions**. The store module uses a Proxy-based architecture — state properties are transparently reactive without `.value` access.
@@ -147,6 +173,21 @@ All web components use bQuery's `component()` API with Shadow DOM, typed props w
 ### Security
 
 User-generated content is sanitized using bQuery's `sanitize()` and `escapeHtml()` functions. The about page includes an interactive demo showing how XSS payloads are neutralized.
+
+## Module Guide (Practical Usage)
+
+- **Core**: Used in `main.ts`, `home.page.ts`, and `dom.utils.ts` for
+    selectors, chaining, delegation, wrapping, scrolling, and form
+    serialization.
+- **Reactive**: Used throughout stores/pages (`signal`, `computed`,
+    `effect`, `batch`, `watch`, `readonly`).
+- **Component**: Reusable Web Components in `src/components/**`.
+- **Motion**: Route transitions, springs, and FLIP task-list animation.
+- **Security**: Sanitization/escaping in about, home, and dashboard/login.
+- **Platform**: Local persistence and browser notifications.
+- **Router**: Route table, dynamic segments, guards, current route signal.
+- **Store**: App/auth/counter/settings stores, including persisted settings.
+- **View**: Declarative `bq-*` bindings in root + page templates.
 
 ## Tech Stack
 

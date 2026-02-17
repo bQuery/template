@@ -1,7 +1,18 @@
+/**
+ * @file Counter demo store.
+ *
+ * Demonstrates minimal reactive store patterns for derived getters
+ * and synchronous actions.
+ */
+
 import { createStore } from '@bquery/bquery/store';
 
 type CounterState = { count: number };
-type CounterGetters = { doubled: number; isPositive: boolean; isNegative: boolean };
+type CounterGetters = {
+  doubled: number;
+  isPositive: boolean;
+  isNegative: boolean;
+};
 type CounterActions = {
   increment(): void;
   decrement(): void;
@@ -15,7 +26,11 @@ type CounterActions = {
  * A minimal store illustrating the bQuery reactive store API with
  * increment, decrement, reset, and arbitrary step operations.
  */
-export const counterStore = createStore<CounterState, CounterGetters, CounterActions>({
+export const counterStore = createStore<
+  CounterState,
+  CounterGetters,
+  CounterActions
+>({
   id: 'counter',
 
   state: () => ({ count: 0 }),
@@ -27,9 +42,19 @@ export const counterStore = createStore<CounterState, CounterGetters, CounterAct
   },
 
   actions: {
-    increment() { this.count = this.count + 1; },
-    decrement() { this.count = this.count - 1; },
-    reset() { this.count = 0; },
-    incrementBy(amount: number) { this.count = this.count + amount; },
+    increment() {
+      this.count = this.count + 1;
+    },
+    decrement() {
+      this.count = this.count - 1;
+    },
+    reset() {
+      this.count = 0;
+    },
+    incrementBy(amount: number) {
+      this.count = this.count + amount;
+    },
+    // NOTE: bQuery currently types `this` in actions dynamically at runtime.
+    // This cast is limited to store action typing interop.
   } as any,
 });

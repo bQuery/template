@@ -1,3 +1,10 @@
+/**
+ * @file Persisted settings store.
+ *
+ * Stores user preferences and keeps them across sessions by using
+ * bQuery's persisted store API.
+ */
+
 import type { Theme } from '@/types';
 import { createPersistedStore, type Store } from '@bquery/bquery/store';
 
@@ -44,5 +51,9 @@ export const settingsStore = createPersistedStore({
     setTheme(theme: Theme) {
       this.theme = theme;
     },
+    // NOTE: bQuery currently types `this` in actions dynamically at runtime.
+    // This cast is limited to store action typing interop.
   } as any,
+  // NOTE: generic constraints for createPersistedStore are broader than our
+  // local state/getter/action interfaces, therefore we narrow the result.
 } as any) as unknown as Store<SettingsState, SettingsGetters, SettingsActions>;

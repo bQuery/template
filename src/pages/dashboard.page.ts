@@ -11,6 +11,7 @@
 import { appStore } from '@/stores/app.store';
 import { authStore } from '@/stores/auth.store';
 import { counterStore } from '@/stores/counter.store';
+import { runFlipAnimation } from '@/utils/animation.utils';
 import { setPageTitle } from '@/utils/dom.utils';
 import { computed, signal } from '@bquery/bquery/reactive';
 import { escapeHtml } from '@bquery/bquery/security';
@@ -136,9 +137,15 @@ export function renderDashboardPage(container: HTMLElement): {
         </div>
 
         <!-- Tasks -->
-        <ul class="divide-y divide-gray-100 dark:divide-gray-700">
+        <ul
+          id="dashboard-task-list"
+          class="divide-y divide-gray-100 dark:divide-gray-700"
+        >
           <template bq-for="task in tasks">
-            <li class="flex items-center gap-3 py-3">
+            <li
+              class="flex items-center gap-3 py-3"
+              bq-bind:data-flip-key="task.id"
+            >
               <input
                 type="checkbox"
                 bq-bind:checked="task.done"
@@ -177,6 +184,7 @@ export function renderDashboardPage(container: HTMLElement): {
     addTask: () => {
       const title = newTaskTitle.value.trim();
       if (!title) return;
+      runFlipAnimation('#dashboard-task-list');
       const safeTitle = escapeHtml(title);
       tasks.value = [
         ...tasks.value,
@@ -186,12 +194,14 @@ export function renderDashboardPage(container: HTMLElement): {
     },
 
     toggleTask: (id: string) => {
+      runFlipAnimation('#dashboard-task-list');
       tasks.value = tasks.value.map((t) =>
         t.id === id ? { ...t, done: !t.done } : t
       );
     },
 
     removeTask: (id: string) => {
+      runFlipAnimation('#dashboard-task-list');
       tasks.value = tasks.value.filter((t) => t.id !== id);
     },
 

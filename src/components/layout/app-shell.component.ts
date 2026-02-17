@@ -12,7 +12,12 @@
  * ```
  */
 
-import { component, html, mergeStyles } from '../base/base.component';
+import {
+  component,
+  html,
+  mergeStyles,
+  reportComponentError,
+} from '../base/base.component';
 
 const SHELL_STYLES = mergeStyles(`
   :host {
@@ -40,6 +45,18 @@ const SHELL_STYLES = mergeStyles(`
 
 component('app-shell', {
   styles: SHELL_STYLES,
+
+  beforeMount() {
+    /* Root shell is about to mount. */
+  },
+
+  beforeUpdate() {
+    return true;
+  },
+
+  onError(error: Error) {
+    reportComponentError('app-shell', error);
+  },
 
   render() {
     return html`

@@ -21,8 +21,17 @@ import './components/ui/navbar.component';
 import './components/ui/notification.component';
 
 // Framework imports
-import { effect } from '@bquery/bquery/reactive';
+import { $, $$ } from '@bquery/bquery/core';
+import {
+  batch,
+  computed,
+  effect,
+  readonly,
+  signal,
+  watch,
+} from '@bquery/bquery/reactive';
 import { currentRoute, interceptLinks } from '@bquery/bquery/router';
+import { mount } from '@bquery/bquery/view';
 
 // Application modules
 import { setupRouter } from './router';
@@ -50,6 +59,37 @@ async function bootstrap(): Promise<void> {
 
   // 3. Initialize the router
   setupRouter();
+
+  const globalFilter = signal('');
+  const routePath = computed(() => currentRoute.value.path);
+  const isAuthenticated = computed(() => authStore.isAuthenticated);
+  const routeLinks = signal([
+    { path: '/', label: 'Home' },
+    { path: '/about', label: 'About' },
+    { path: '/dashboard', label: 'Dashboard' },
+    { path: '/settings', label: 'Settings' },
+    { path: '/login', label: 'Login' },
+  ]);
+
+  const quickLinks = computed(() => {
+    const term = globalFilter.value.trim().toLowerCase();
+    const links = routeLinks.value;
+    if (!term) return links;
+    return links.filter(
+      (link) =>
+        link.label.toLowerCase().includes(term) ||
+        link.path.toLowerCase().includes(term)
+    );
+  });
+
+  // Root mount required by the template contract.
+  mount('#app', {
+    routePath,
+    isAuthenticated,
+    globalFilter,
+    quickLinks,
+    readonlyFilter: readonly(globalFilter),
+  });
 
   // 4. Intercept <a> clicks for SPA navigation
   interceptLinks(document.body);
@@ -79,9 +119,43 @@ async function bootstrap(): Promise<void> {
 
   // 7. Listen for theme toggle from navbar
   document.addEventListener('toggle-theme', () => {
-    appStore.toggleTheme();
-    settingsStore.setTheme(appStore.theme);
+    batch(() => {
+      appStore.toggleTheme();
+      settingsStore.setTheme(appStore.theme);
+    });
   });
+
+  // Track route changes and keep layout polished.
+  const stopRouteWatch = watch(
+    routePath,
+    () => {
+      $('#router-outlet').scrollTo({ behavior: 'smooth', block: 'start' });
+      $$('#router-outlet, app-shell').addClass('route-transitioning');
+      setTimeout(() => {
+        $$('#router-outlet, app-shell').removeClass('route-transitioning');
+      }, 180);
+    },
+    { immediate: true }
+  );
+
+  // Handle component errors centrally without using console.error.
+  const onComponentError = (event: Event): void => {
+    const customEvent = event as CustomEvent<{
+      componentName: string;
+      message: string;
+    }>;
+
+    const detail = customEvent.detail;
+    if (!detail) return;
+
+    appStore.addNotification({
+      type: 'error',
+      message: `${detail.componentName}: ${detail.message}`,
+      duration: 5000,
+    });
+  };
+
+  document.addEventListener('component-error', onComponentError);
 
   // 8. Reactive notification rendering
   effect(() => {
@@ -104,6 +178,9 @@ async function bootstrap(): Promise<void> {
       });
     });
   });
+
+  // Keep references active so TypeScript does not prune callbacks in strict mode.
+  void stopRouteWatch;
 }
 
 // Boot the application when DOM is ready

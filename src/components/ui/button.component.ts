@@ -12,7 +12,12 @@
  * ```
  */
 
-import { component, html, mergeStyles } from '../base/base.component';
+import {
+  component,
+  html,
+  mergeStyles,
+  reportComponentError,
+} from '../base/base.component';
 
 /** CSS custom-property-driven button styles. */
 const BUTTON_STYLES = mergeStyles(`
@@ -105,12 +110,20 @@ component<{
   },
   styles: BUTTON_STYLES,
 
+  beforeMount() {
+    /* Button is about to mount. */
+  },
+
+  beforeUpdate() {
+    return true;
+  },
+
   connected() {
     /* Component successfully connected to DOM */
   },
 
   onError(error: Error) {
-    console.error('[ui-button] Render error:', error.message);
+    reportComponentError('ui-button', error);
   },
 
   render({ props, emit }) {

@@ -11,7 +11,12 @@
  * ```
  */
 
-import { component, html, mergeStyles } from '../base/base.component';
+import {
+  component,
+  html,
+  mergeStyles,
+  reportComponentError,
+} from '../base/base.component';
 
 const NAVBAR_STYLES = mergeStyles(`
   nav {
@@ -143,8 +148,16 @@ component<{
   },
   styles: NAVBAR_STYLES,
 
+  beforeMount() {
+    /* Navbar is about to mount. */
+  },
+
+  beforeUpdate() {
+    return true;
+  },
+
   onError(error: Error) {
-    console.error('[app-navbar] Render error:', error.message);
+    reportComponentError('app-navbar', error);
   },
 
   render({ props, emit }) {

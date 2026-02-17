@@ -55,12 +55,12 @@ export function createAuthGuard(): NavigationGuard {
     const authenticated = authStore.isAuthenticated;
 
     if (!authenticated && isProtectedPath(to.path)) {
-      navigate('/login');
+      navigate('/login', { replace: true });
       return false;
     }
 
     if (authenticated && to.path === '/login') {
-      navigate('/dashboard');
+      navigate('/dashboard', { replace: true });
       return false;
     }
 

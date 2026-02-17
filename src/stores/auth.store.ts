@@ -1,3 +1,10 @@
+/**
+ * @file Authentication store.
+ *
+ * Holds the reactive session state (user/token) and delegates auth
+ * operations to the auth service.
+ */
+
 import { authService } from '@/services/auth.service';
 import type { User } from '@/types';
 import { createStore } from '@bquery/bquery/store';
@@ -72,5 +79,7 @@ export const authStore = createStore<AuthState, AuthGetters, AuthActions>({
       this.user = user;
       this.token = token;
     },
+    // NOTE: bQuery currently types `this` in actions dynamically at runtime.
+    // This cast is limited to store action typing interop.
   } as any,
 });
