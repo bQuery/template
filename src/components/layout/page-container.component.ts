@@ -13,48 +13,56 @@
  * ```
  */
 
-import {
-  component,
-  html,
-  mergeStyles,
-  reportComponentError,
-} from '../base/base.component';
+import { reportComponentError } from '../base/base.component';
 
-const CONTAINER_STYLES = mergeStyles(`
-  .container {
-    width: 100%;
-    max-width: 72rem;
-    margin: 0 auto;
-    padding: 2rem 1.5rem;
+const CONTAINER_TEMPLATE = /* html */ `
+  <style>
+    :host {
+      display: block;
+      box-sizing: border-box;
+    }
+    :host([hidden]) {
+      display: none !important;
+    }
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 72rem;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    @media (max-width: 640px) {
+      .container {
+        padding: 1.25rem 1rem;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <slot></slot>
+  </div>
+`;
+
+class PageContainerElement extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
   }
 
-  @media (max-width: 640px) {
-    .container {
-      padding: 1.25rem 1rem;
+  connectedCallback(): void {
+    try {
+      if (!this.shadowRoot) return;
+      this.shadowRoot.innerHTML = CONTAINER_TEMPLATE;
+    } catch (error) {
+      reportComponentError('page-container', error as Error);
     }
   }
-`);
+}
 
-component('page-container', {
-  styles: CONTAINER_STYLES,
-
-  beforeMount() {
-    /* Layout container is about to mount. */
-  },
-
-  beforeUpdate() {
-    return true;
-  },
-
-  onError(error: Error) {
-    reportComponentError('page-container', error);
-  },
-
-  render() {
-    return html`
-      <div class="container">
-        <slot></slot>
-      </div>
-    `;
-  },
-});
+if (!customElements.get('page-container')) {
+  customElements.define('page-container', PageContainerElement);
+}

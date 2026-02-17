@@ -13,92 +13,107 @@
  * ```
  */
 
-import {
-  component,
-  html,
-  mergeStyles,
-  reportComponentError,
-} from '../base/base.component';
+import { reportComponentError } from '../base/base.component';
 
-const CARD_STYLES = mergeStyles(`
-  .card {
-    background-color: #ffffff;
-    border: 1px solid #e5e7eb;
-    border-radius: 0.75rem;
-    padding: 1.5rem;
-    transition: box-shadow 200ms ease, transform 200ms ease;
-  }
-  :host([hoverable]) .card:hover {
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1),
-                0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    transform: translateY(-2px);
-  }
-  .card-title {
-    font-size: 1.125rem;
-    font-weight: 700;
-    color: #111827;
-    margin: 0 0 0.75rem;
-    line-height: 1.4;
-  }
-  .card-body {
-    color: #4b5563;
-    font-size: 0.9375rem;
-    line-height: 1.6;
+const escapeHtml = (value: string): string =>
+  value
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#x27;');
+
+class UiCardElement extends HTMLElement {
+  static get observedAttributes(): string[] {
+    return ['card-title', 'hoverable'];
   }
 
-  /* Dark mode support via host class */
-  :host(.dark) .card {
-    background-color: #1f2937;
-    border-color: #374151;
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
   }
-  :host(.dark) .card-title {
-    color: #f9fafb;
+
+  connectedCallback(): void {
+    this.render();
   }
-  :host(.dark) .card-body {
-    color: #d1d5db;
+
+  attributeChangedCallback(): void {
+    if (!this.isConnected) return;
+    this.render();
   }
-`);
 
-component<{
-  cardTitle: string;
-  hoverable: boolean;
-}>('ui-card', {
-  props: {
-    cardTitle: {
-      type: String,
-      default: '',
-    },
-    hoverable: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  styles: CARD_STYLES,
+  private render(): void {
+    try {
+      if (!this.shadowRoot) return;
 
-  beforeMount() {
-    /* Card is about to mount. */
-  },
+      const cardTitle = this.getAttribute('card-title') ?? '';
+      const titleHtml = cardTitle
+        ? `<h3 class="card-title">${escapeHtml(cardTitle)}</h3>`
+        : '';
 
-  beforeUpdate() {
-    return true;
-  },
+      this.shadowRoot.innerHTML = `
+        <style>
+          :host {
+            display: block;
+            box-sizing: border-box;
+          }
+          :host([hidden]) {
+            display: none !important;
+          }
+          *, *::before, *::after {
+            box-sizing: border-box;
+          }
 
-  onError(error: Error) {
-    reportComponentError('ui-card', error);
-  },
+          .card {
+            background-color: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            transition: box-shadow 200ms ease, transform 200ms ease;
+          }
+          :host([hoverable]) .card:hover {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1),
+                        0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transform: translateY(-2px);
+          }
+          .card-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: #111827;
+            margin: 0 0 0.75rem;
+            line-height: 1.4;
+          }
+          .card-body {
+            color: #4b5563;
+            font-size: 0.9375rem;
+            line-height: 1.6;
+          }
 
-  render({ props }) {
-    const titleHtml = props.cardTitle
-      ? html`<h3 class="card-title">${props.cardTitle}</h3>`
-      : '';
+          :host(.dark) .card {
+            background-color: #1f2937;
+            border-color: #374151;
+          }
+          :host(.dark) .card-title {
+            color: #f9fafb;
+          }
+          :host(.dark) .card-body {
+            color: #d1d5db;
+          }
+        </style>
 
-    return html`
-      <div class="card">
-        ${titleHtml}
-        <div class="card-body">
-          <slot></slot>
+        <div class="card">
+          ${titleHtml}
+          <div class="card-body">
+            <slot></slot>
+          </div>
         </div>
-      </div>
-    `;
-  },
-});
+      `;
+    } catch (error) {
+      reportComponentError('ui-card', error as Error);
+    }
+  }
+}
+
+if (!customElements.get('ui-card')) {
+  customElements.define('ui-card', UiCardElement);
+}
