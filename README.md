@@ -1,62 +1,163 @@
-# bQuery Template
+# @bQuery/template
 
-A template repository built with [@bquery/bquery](https://github.com/bQuery/bQuery) to build dynamic client-side apps.
+Production-ready frontend template for building single-page applications with **[bQuery.js](https://github.com/nicokempe/bquery)**, **TypeScript**, and **Tailwind CSS v4**.
+
+This project serves as a reference implementation that demonstrates **all 9 bQuery modules** in a realistic SPA with routing, authentication, state management, animations, and web components.
+
+## Features
+
+- **TypeScript** strict mode — zero type errors
+- **Tailwind CSS v4** with custom theme tokens and dark mode
+- **6 routes** with lazy loading and code-splitting
+- **8 custom web components** (buttons, cards, modals, notifications, navbar, layouts)
+- **4 reactive stores** (app, auth, counter, settings — including a persisted store)
+- **3 services** (storage, API, auth)
+- **Navigation guards** for protected routes
+- **View Transitions** for smooth page changes
+- **Spring physics animations** on the counter demo
+- **HTML sanitization** with XSS protection
+- **Browser notification** integration
+- **DRY / OOP architecture** with full JSDoc documentation
+
+## bQuery Modules Used
+
+| Module        | Purpose                                                                                                        | Where                                  |
+| ------------- | -------------------------------------------------------------------------------------------------------------- | -------------------------------------- |
+| **Core**      | `$()`, `$$()`, `ready()`                                                                                       | Utilities, component internals         |
+| **Reactive**  | `signal()`, `computed()`, `effect()`, `batch()`                                                                | Pages, stores, main.ts                 |
+| **Component** | `component()`, `html`, `safeHtml`                                                                              | 8 web components in `src/components/`  |
+| **Motion**    | `spring()`, `transition()`, `springPresets`                                                                    | Page transitions, counter animation    |
+| **Security**  | `sanitize()`, `escapeHtml`                                                                                     | About page, login form, sanitize utils |
+| **Platform**  | `storage.local()`, `notifications`                                                                             | Auth service, settings page            |
+| **Router**    | `createRouter()`, `navigate()`, `currentRoute`, `interceptLinks`                                               | Router config, guards, main.ts         |
+| **Store**     | `createStore()`, `createPersistedStore()`                                                                      | 4 stores in `src/stores/`              |
+| **View**      | `mount()` with `bq-text`, `bq-on`, `bq-model`, `bq-if`, `bq-for`, `bq-class`, `bq-html`, `bq-style`, `bq-bind` | All 6 pages                            |
+
+## Project Structure
+
+```
+template/
+├── index.html                    # Entry HTML
+├── package.json                  # Dependencies & scripts
+├── tsconfig.json                 # TypeScript configuration
+├── vite.config.ts                # Vite + Tailwind plugin
+├── bunfig.toml                   # Bun configuration
+├── public/
+│   └── favicon.svg               # App icon
+└── src/
+    ├── main.ts                   # Application bootstrap
+    ├── router.ts                 # Route definitions & guards
+    ├── vite-env.d.ts             # Vite client types
+    ├── styles/
+    │   └── app.css               # Tailwind v4 + custom theme
+    ├── types/
+    │   └── index.ts              # Shared TypeScript types
+    ├── services/
+    │   ├── api.service.ts        # HTTP client service
+    │   ├── auth.service.ts       # Authentication service
+    │   └── storage.service.ts    # Local storage wrapper
+    ├── stores/
+    │   ├── app.store.ts          # Theme, loading, notifications
+    │   ├── auth.store.ts         # User session & token
+    │   ├── counter.store.ts      # Counter demo store
+    │   └── settings.store.ts     # Persisted user settings
+    ├── guards/
+    │   └── auth.guard.ts         # Navigation guard
+    ├── utils/
+    │   ├── animation.utils.ts    # Motion helper functions
+    │   ├── dom.utils.ts          # DOM utility functions
+    │   └── sanitize.utils.ts     # Security sanitization helpers
+    ├── components/
+    │   ├── base/
+    │   │   └── base.component.ts # Shared component utilities
+    │   ├── layout/
+    │   │   ├── app-shell.component.ts
+    │   │   └── page-container.component.ts
+    │   └── ui/
+    │       ├── button.component.ts
+    │       ├── card.component.ts
+    │       ├── modal.component.ts
+    │       ├── navbar.component.ts
+    │       └── notification.component.ts
+    └── pages/
+        ├── home.page.ts          # Counter + two-way binding demo
+        ├── about.page.ts         # Sanitization demo + tech info
+        ├── dashboard.page.ts     # Task list (auth-protected)
+        ├── login.page.ts         # Login form
+        ├── settings.page.ts      # Persisted settings
+        └── not-found.page.ts     # 404 page
+```
 
 ## Getting Started
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) (v18 or later)
+- [Bun](https://bun.sh/) ≥ 1.0
 
-### Install dependencies
-
-```bash
-npm install
-```
-
-### Start development server
+### Install
 
 ```bash
-npm run dev
+bun install
 ```
 
-### Build for production
+### Development
 
 ```bash
-npm run build
+bun run dev
 ```
 
-### Preview production build
+Opens the dev server at [http://localhost:3000](http://localhost:3000) with hot module replacement.
+
+### Type Check
 
 ```bash
-npm run preview
+bun run typecheck
 ```
 
-## Project Structure
+### Build
 
-```text
-├── index.html              # App entry point
-├── src/
-│   ├── main.ts             # TypeScript entry – signals, DOM, events
-│   ├── style.css           # Global styles
-│   └── components/
-│       └── greeting-card.ts # Example Web Component
-├── package.json
-├── tsconfig.json
-└── vite.config.ts
+```bash
+bun run build
 ```
 
-## What's Included
+Produces an optimized production build in `dist/` with code-splitting and lazy-loaded page chunks.
 
-- **Reactive Counter** – demonstrates `signal`, `computed`, and `effect`
-- **To-Do List** – reactive list with add, toggle, and remove
-- **Web Component** – a `<greeting-card>` built with `component()` and `html`
+### Preview
 
-## Learn More
+```bash
+bun run preview
+```
 
-- [bQuery.js Documentation](https://github.com/bQuery/bQuery)
-- [Vite Documentation](https://vite.dev/)
+Serves the production build locally.
+
+## Architecture
+
+### State Management
+
+Stores use `createStore()` (and `createPersistedStore()` for settings) with a clear separation of **state**, **getters**, and **actions**. The store module uses a Proxy-based architecture — state properties are transparently reactive without `.value` access.
+
+### Routing
+
+Routes are defined in `src/router.ts` using `createRouter()`. Pages are lazy-loaded via dynamic imports for automatic code-splitting. An authentication guard protects `/dashboard` and `/settings`, redirecting unauthenticated users to `/login`.
+
+### Components
+
+All web components use bQuery's `component()` API with Shadow DOM, typed props with validators, and scoped styles. A shared `base.component.ts` provides common style constants and utility functions.
+
+### Security
+
+User-generated content is sanitized using bQuery's `sanitize()` and `escapeHtml()` functions. The about page includes an interactive demo showing how XSS payloads are neutralized.
+
+## Tech Stack
+
+| Tool                                          | Version |
+| --------------------------------------------- | ------- |
+| [bQuery](https://github.com/nicokempe/bquery) | 1.4.0   |
+| [TypeScript](https://www.typescriptlang.org/) | 5.x     |
+| [Tailwind CSS](https://tailwindcss.com/)      | 4.x     |
+| [Vite](https://vite.dev/)                     | 6.x     |
+| [Bun](https://bun.sh/)                        | ≥ 1.0   |
 
 ## License
 
-MIT
+MIT — see [LICENSE](./LICENSE).

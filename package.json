@@ -1,19 +1,31 @@
 {
-  "name": "bquery-template",
-  "private": true,
+  "name": "@bquery/template",
   "version": "1.0.0",
+  "description": "Production-ready frontend template for building SPAs with bQuery.js — featuring TypeScript, Tailwind CSS, and all bQuery modules.",
   "type": "module",
-  "description": "A template repository built with @bquery/bquery to build dynamic client-side apps",
   "scripts": {
     "dev": "vite",
-    "build": "tsc --noEmit && vite build",
-    "preview": "vite preview"
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
   },
+  "keywords": [
+    "bquery",
+    "template",
+    "spa",
+    "typescript",
+    "tailwind",
+    "web-components"
+  ],
+  "author": "bQuery",
+  "license": "MIT",
   "dependencies": {
-    "@bquery/bquery": "^1.3.0"
+    "@bquery/bquery": "latest"
   },
   "devDependencies": {
-    "typescript": "^5.8.3",
-    "vite": "^6.3.5"
+    "@tailwindcss/vite": "^4.0.0",
+    "tailwindcss": "^4.0.0",
+    "typescript": "^5.7.0",
+    "vite": "^6.0.0"
   }
 }

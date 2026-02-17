@@ -1,17 +1,21 @@
 # Dependencies
 node_modules/
 
-# Build outputs
+# Build output
 dist/
 
-# IDE and editor files
-.idea/
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# IDE
 .vscode/
+.idea/
 *.swp
 *.swo
-*~
 
-# OS generated files
+# OS
 .DS_Store
 Thumbs.db
 
@@ -19,10 +23,5 @@ Thumbs.db
 *.log
 npm-debug.log*
 
-# Environment files
-.env
-.env.local
-.env.*.local
-
-# Cache
-.cache/
+# Bun
+bun.lockb

@@ -1,111 +1,114 @@
-import { $, signal, computed, effect } from '@bquery/bquery';
-import './components/greeting-card';
+/**
+ * @file Application entry point.
+ *
+ * Bootstraps the entire bQuery template application:
+ * 1. Registers all Web Components
+ * 2. Hydrates authentication state from storage
+ * 3. Initializes the router
+ * 4. Mounts the root reactive view
+ * 5. Sets up theme, navigation, and notification rendering
+ */
 
-// ── Reactive Counter ────────────────────────────────────────────────
-const count = signal(0);
-const doubled = computed(() => count.value * 2);
+import './styles/app.css';
 
-effect(() => {
-  $('#count').text(String(count.value));
-  $('#doubled').text(String(doubled.value));
-});
+// Register Web Components (side-effect imports)
+import './components/layout/app-shell.component';
+import './components/layout/page-container.component';
+import './components/ui/button.component';
+import './components/ui/card.component';
+import './components/ui/modal.component';
+import './components/ui/navbar.component';
+import './components/ui/notification.component';
 
-$('#increment').on('click', () => {
-  count.value++;
-});
+// Framework imports
+import { effect } from '@bquery/bquery/reactive';
+import { currentRoute, interceptLinks } from '@bquery/bquery/router';
 
-$('#decrement').on('click', () => {
-  count.value--;
-});
+// Application modules
+import { setupRouter } from './router';
+import { appStore } from './stores/app.store';
+import { authStore } from './stores/auth.store';
+import { settingsStore } from './stores/settings.store';
 
-$('#reset').on('click', () => {
-  count.value = 0;
-});
+/**
+ * Initialize and start the application.
+ *
+ * This function is the single entry point that orchestrates the
+ * entire boot process.
+ */
+async function bootstrap(): Promise<void> {
+  // 1. Restore persisted theme from settings store
+  const savedTheme = settingsStore.theme;
+  appStore.setTheme(savedTheme);
 
-// ── To-Do List ──────────────────────────────────────────────────────
-interface Todo {
-  id: number;
-  text: string;
-  done: boolean;
-}
-
-const todos = signal<Todo[]>([]);
-let nextId = 1;
-
-function renderTodos() {
-  const list = document.querySelector('#todo-list');
-  if (!list) return;
-
-  const focused = document.activeElement;
-  const focusedId = focused?.closest('li')?.dataset.todoId;
-  const focusedIsRemove =
-    focused instanceof HTMLButtonElement &&
-    focused.dataset.action === 'remove';
-
-  list.innerHTML = '';
-  for (const todo of todos.value) {
-    const li = document.createElement('li');
-    li.className = todo.done ? 'done' : '';
-    li.dataset.todoId = String(todo.id);
-
-    const toggleButton = document.createElement('button');
-    toggleButton.type = 'button';
-    toggleButton.textContent = todo.text;
-    toggleButton.setAttribute('aria-label', `Toggle todo "${todo.text}"`);
-    toggleButton.setAttribute('aria-pressed', String(todo.done));
-    toggleButton.addEventListener('click', () => {
-      todos.value = todos.value.map((t) =>
-        t.id === todo.id ? { ...t, done: !t.done } : t
-      );
-    });
-
-    const removeBtn = document.createElement('button');
-    removeBtn.type = 'button';
-    removeBtn.textContent = '✕';
-    removeBtn.dataset.action = 'remove';
-    removeBtn.setAttribute('aria-label', `Remove todo "${todo.text}"`);
-    removeBtn.addEventListener('click', () => {
-      todos.value = todos.value.filter((t) => t.id !== todo.id);
-    });
-
-    li.appendChild(toggleButton);
-    li.appendChild(removeBtn);
-    list.appendChild(li);
+  // 2. Hydrate authentication state from storage
+  try {
+    await authStore.hydrate();
+  } catch {
+    // If hydration fails, user simply stays logged out
   }
 
-  if (focusedId) {
-    const target = list.querySelector(`li[data-todo-id="${focusedId}"]`);
-    let btn: HTMLButtonElement | null = null;
+  // 3. Initialize the router
+  setupRouter();
 
-    if (target) {
-      btn = focusedIsRemove
-        ? target.querySelector<HTMLButtonElement>('button[data-action="remove"]')
-        : target.querySelector<HTMLButtonElement>('button:first-of-type');
-    } else {
-      const fallbackItem = list.querySelector<HTMLLIElement>('li');
-      if (fallbackItem) {
-        btn = fallbackItem.querySelector<HTMLButtonElement>('button:first-of-type');
-      }
+  // 4. Intercept <a> clicks for SPA navigation
+  interceptLinks(document.body);
+
+  // 5. Reactive theme sync — toggle `dark` class on <html>
+  effect(() => {
+    const isDark = appStore.isDarkMode;
+    document.documentElement.classList.toggle('dark', isDark);
+  });
+
+  // 6. Reactive navbar update
+  effect(() => {
+    const path = currentRoute.value.path;
+    const user = authStore.userName;
+    const isAuth = authStore.isAuthenticated;
+    const isDark = appStore.isDarkMode;
+
+    const navbar = document.querySelector('app-navbar');
+    if (navbar) {
+      navbar.setAttribute('current-path', path);
+      navbar.setAttribute('user-name', user);
+      navbar.setAttribute('is-authenticated', String(isAuth));
+      navbar.setAttribute('is-dark', String(isDark));
+      navbar.classList.toggle('dark', isDark);
     }
+  });
 
-    btn?.focus();
-  }
+  // 7. Listen for theme toggle from navbar
+  document.addEventListener('toggle-theme', () => {
+    appStore.toggleTheme();
+    settingsStore.setTheme(appStore.theme);
+  });
+
+  // 8. Reactive notification rendering
+  effect(() => {
+    const notifs = appStore.notifications;
+    const stack = document.getElementById('notification-stack');
+    if (!stack) return;
+
+    stack.innerHTML = notifs
+      .map(
+        (n: { type: string; message: string }) =>
+          `<ui-notification variant="${n.type}" message="${n.message}"></ui-notification>`
+      )
+      .join('');
+
+    // Attach dismiss handlers
+    stack.querySelectorAll('ui-notification').forEach((el, i) => {
+      el.addEventListener('dismiss', () => {
+        const notif = notifs[i];
+        if (notif) appStore.removeNotification(notif.id);
+      });
+    });
+  });
 }
 
-effect(() => {
-  renderTodos();
-});
-
-const form = document.querySelector('#todo-form');
-const input = document.querySelector('#todo-input') as HTMLInputElement | null;
-
-form?.addEventListener('submit', (e) => {
-  e.preventDefault();
-  if (!input) return;
-
-  const text = input.value.trim();
-  if (!text) return;
-
-  todos.value = [...todos.value, { id: nextId++, text, done: false }];
-  input.value = '';
-});
+// Boot the application when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', bootstrap);
+} else {
+  bootstrap();
+}

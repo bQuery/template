@@ -3,52 +3,26 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>bQuery App</title>
-    <link rel="stylesheet" href="/src/style.css" />
+    <meta
+      name="description"
+      content="bQuery Template — a production-ready SPA starter built with bQuery, TypeScript, and Tailwind CSS."
+    />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>bQuery Template</title>
   </head>
   <body>
-    <div id="app">
-      <header>
-        <h1>bQuery.js Template</h1>
-        <p>A dynamic client-side app built with <a href="https://github.com/bQuery/bQuery">@bquery/bquery</a></p>
-      </header>
+    <!-- App Shell — provides navbar + main content area -->
+    <app-shell>
+      <app-navbar slot="navbar"></app-navbar>
 
-      <main>
-        <!-- Counter Demo -->
-        <section id="counter">
-          <h2>Reactive Counter</h2>
-          <p>Count: <span id="count">0</span></p>
-          <p>Doubled: <span id="doubled">0</span></p>
-          <div class="button-group">
-            <button id="increment">Increment</button>
-            <button id="decrement">Decrement</button>
-            <button id="reset">Reset</button>
-          </div>
-        </section>
+      <!-- Router outlet — pages are rendered here -->
+      <div id="router-outlet"></div>
 
-        <!-- To-Do List Demo -->
-        <section id="todo">
-          <h2>To-Do List</h2>
-          <form id="todo-form">
-            <label for="todo-input" class="sr-only">New task</label>
-            <input type="text" id="todo-input" placeholder="Add a task…" required />
-            <button type="submit">Add</button>
-          </form>
-          <ul id="todo-list"></ul>
-        </section>
+      <!-- Notification stack -->
+      <div id="notification-stack" slot="notifications"></div>
+    </app-shell>
 
-        <!-- Component Demo -->
-        <section id="components">
-          <h2>Web Components</h2>
-          <greeting-card name="World"></greeting-card>
-        </section>
-      </main>
-
-      <footer>
-        <p>Built with <a href="https://github.com/bQuery/bQuery">bQuery.js</a></p>
-      </footer>
-    </div>
-
+    <!-- Application entry point -->
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
