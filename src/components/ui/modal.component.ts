@@ -146,19 +146,19 @@ class UiModalElement extends HTMLElement {
             to   { opacity: 1; transform: scale(1); }
           }
 
-          :host(.dark) .modal {
+          :host-context(.dark) .modal {
             background-color: #1f2937;
           }
-          :host(.dark) .modal-title {
+          :host-context(.dark) .modal-title {
             color: #f9fafb;
           }
-          :host(.dark) .close-btn {
+          :host-context(.dark) .close-btn {
             color: #9ca3af;
           }
-          :host(.dark) .close-btn:hover {
+          :host-context(.dark) .close-btn:hover {
             color: #f9fafb;
           }
-          :host(.dark) .modal-body {
+          :host-context(.dark) .modal-body {
             color: #d1d5db;
           }
         </style>

@@ -53,6 +53,12 @@ const SHELL_TEMPLATE = /* html */ `
     .notification-stack > * {
       pointer-events: auto;
     }
+
+    /* Dark mode */
+    :host-context(.dark) .shell-root {
+      background-color: #0f172a;
+      color: #f1f5f9;
+    }
   </style>
 
   <div class="shell-root">

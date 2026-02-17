@@ -111,6 +111,31 @@ component<{
     /* Notification is about to mount. */
   },
 
+  connected() {
+    const self = this as unknown as HTMLElement;
+    const handleClick = (event: Event): void => {
+      const target = event.target as HTMLElement | null;
+      if (target?.closest('.close')) {
+        self.dispatchEvent(
+          new CustomEvent('dismiss', {
+            bubbles: true,
+            composed: true,
+          })
+        );
+      }
+    };
+    self.shadowRoot?.addEventListener('click', handleClick);
+    (self as any)._handleClick = handleClick;
+  },
+
+  disconnected() {
+    const self = this as unknown as HTMLElement;
+    const handleClick = (self as any)._handleClick as EventListener | undefined;
+    if (handleClick) {
+      self.shadowRoot?.removeEventListener('click', handleClick);
+    }
+  },
+
   beforeUpdate() {
     return true;
   },
@@ -119,7 +144,7 @@ component<{
     reportComponentError('ui-notification', error);
   },
 
-  render({ props, emit }) {
+  render({ props }) {
     const variant = props.variant || 'info';
     const icon = ICONS[variant] ?? ICONS.info;
 
@@ -127,13 +152,7 @@ component<{
       <div class="notification ${variant}" role="alert">
         <span class="icon">${icon}</span>
         <span class="message">${props.message}</span>
-        <button
-          class="close"
-          aria-label="Dismiss"
-          onclick="${() => emit('dismiss')}"
-        >
-          ×
-        </button>
+        <button class="close" aria-label="Dismiss">×</button>
       </div>
     `;
   },

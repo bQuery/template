@@ -89,14 +89,14 @@ class UiCardElement extends HTMLElement {
             line-height: 1.6;
           }
 
-          :host(.dark) .card {
+          :host-context(.dark) .card {
             background-color: #1f2937;
             border-color: #374151;
           }
-          :host(.dark) .card-title {
+          :host-context(.dark) .card-title {
             color: #f9fafb;
           }
-          :host(.dark) .card-body {
+          :host-context(.dark) .card-body {
             color: #d1d5db;
           }
         </style>

@@ -26,12 +26,40 @@ class UiButtonElement extends HTMLElement {
 
   connectedCallback(): void {
     this.render();
+    this._clickHandler = (): void => {
+      if (this.hasAttribute('disabled')) return;
+      this.dispatchEvent(
+        new CustomEvent('press', {
+          bubbles: true,
+          composed: true,
+        })
+      );
+    };
+    this.shadowRoot
+      ?.querySelector('button')
+      ?.addEventListener('click', this._clickHandler);
+  }
+
+  disconnectedCallback(): void {
+    if (this._clickHandler) {
+      this.shadowRoot
+        ?.querySelector('button')
+        ?.removeEventListener('click', this._clickHandler);
+    }
   }
 
   attributeChangedCallback(): void {
     if (!this.isConnected) return;
     this.render();
+    // Re-attach event listener after re-render
+    if (this._clickHandler) {
+      this.shadowRoot
+        ?.querySelector('button')
+        ?.addEventListener('click', this._clickHandler);
+    }
   }
+
+  private _clickHandler: (() => void) | null = null;
 
   private render(): void {
     try {
@@ -116,23 +144,28 @@ class UiButtonElement extends HTMLElement {
           .ghost:hover:not(:disabled) {
             background-color: rgba(99, 102, 241, 0.08);
           }
+
+          /* Dark mode */
+          :host-context(.dark) .secondary {
+            background-color: #374151;
+            color: #f9fafb;
+          }
+          :host-context(.dark) .secondary:hover:not(:disabled) {
+            background-color: #4b5563;
+          }
+          :host-context(.dark) .ghost {
+            color: #818cf8;
+            border-color: #818cf8;
+          }
+          :host-context(.dark) .ghost:hover:not(:disabled) {
+            background-color: rgba(99, 102, 241, 0.15);
+          }
         </style>
 
         <button class="${className}" ${disabled ? 'disabled' : ''}>
           <slot>${label}</slot>
         </button>
       `;
-
-      const button = this.shadowRoot.querySelector('button');
-      button?.addEventListener('click', () => {
-        if (disabled) return;
-        this.dispatchEvent(
-          new CustomEvent('press', {
-            bubbles: true,
-            composed: true,
-          })
-        );
-      });
     } catch (error) {
       reportComponentError('ui-button', error as Error);
     }

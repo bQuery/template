@@ -113,7 +113,6 @@ async function bootstrap(): Promise<void> {
       navbar.setAttribute('user-name', user);
       navbar.setAttribute('is-authenticated', String(isAuth));
       navbar.setAttribute('is-dark', String(isDark));
-      navbar.classList.toggle('dark', isDark);
     }
   });
 

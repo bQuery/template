@@ -11,6 +11,7 @@
  * ```
  */
 
+import { navigate } from '@bquery/bquery/router';
 import {
   component,
   html,
@@ -19,6 +20,11 @@ import {
 } from '../base/base.component';
 
 const NAVBAR_STYLES = mergeStyles(`
+  :host {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
   nav {
     display: flex;
     align-items: center;
@@ -90,32 +96,32 @@ const NAVBAR_STYLES = mergeStyles(`
   }
 
   /* Dark mode */
-  :host(.dark) nav {
+  :host-context(.dark) nav {
     background-color: #111827;
     border-color: #1f2937;
   }
-  :host(.dark) .nav-links a {
+  :host-context(.dark) .nav-links a {
     color: #d1d5db;
   }
-  :host(.dark) .nav-links a:hover {
+  :host-context(.dark) .nav-links a:hover {
     background-color: #1f2937;
     color: #f9fafb;
   }
-  :host(.dark) .nav-links a.active {
+  :host-context(.dark) .nav-links a.active {
     background-color: rgba(99, 102, 241, 0.15);
     color: #818cf8;
   }
-  :host(.dark) .theme-toggle {
+  :host-context(.dark) .theme-toggle {
     border-color: #374151;
     color: #d1d5db;
   }
-  :host(.dark) .theme-toggle:hover {
+  :host-context(.dark) .theme-toggle:hover {
     background-color: #1f2937;
   }
-  :host(.dark) .user-badge {
+  :host-context(.dark) .user-badge {
     color: #9ca3af;
   }
-  :host(.dark) .user-badge strong {
+  :host-context(.dark) .user-badge strong {
     color: #f9fafb;
   }
 
@@ -135,21 +141,61 @@ const NAVBAR_STYLES = mergeStyles(`
 `);
 
 component<{
-  currentPath: string;
-  userName: string;
-  isAuthenticated: boolean;
-  isDark: boolean;
+  'current-path': string;
+  'user-name': string;
+  'is-authenticated': boolean;
+  'is-dark': boolean;
 }>('app-navbar', {
   props: {
-    currentPath: { type: String, default: '/' },
-    userName: { type: String, default: 'Guest' },
-    isAuthenticated: { type: Boolean, default: false },
-    isDark: { type: Boolean, default: false },
+    'current-path': { type: String, default: '/' },
+    'user-name': { type: String, default: 'Guest' },
+    'is-authenticated': { type: Boolean, default: false },
+    'is-dark': { type: Boolean, default: false },
   },
   styles: NAVBAR_STYLES,
 
   beforeMount() {
     /* Navbar is about to mount. */
+  },
+
+  connected() {
+    const self = this as unknown as HTMLElement;
+    const handleClick = (event: Event): void => {
+      const target = event.target as HTMLElement | null;
+      if (!target) return;
+
+      // Theme toggle button
+      if (target.closest('.theme-toggle')) {
+        event.preventDefault();
+        self.dispatchEvent(
+          new CustomEvent('toggle-theme', {
+            bubbles: true,
+            composed: true,
+          })
+        );
+        return;
+      }
+
+      // SPA link navigation inside shadow DOM
+      const anchor = target.closest('a[href]') as HTMLAnchorElement | null;
+      if (anchor) {
+        const href = anchor.getAttribute('href');
+        if (href && href.startsWith('/')) {
+          event.preventDefault();
+          navigate(href);
+        }
+      }
+    };
+    self.shadowRoot?.addEventListener('click', handleClick);
+    (self as any)._handleClick = handleClick;
+  },
+
+  disconnected() {
+    const self = this as unknown as HTMLElement;
+    const handleClick = (self as any)._handleClick as EventListener | undefined;
+    if (handleClick) {
+      self.shadowRoot?.removeEventListener('click', handleClick);
+    }
   },
 
   beforeUpdate() {
@@ -160,26 +206,29 @@ component<{
     reportComponentError('app-navbar', error);
   },
 
-  render({ props, emit }) {
-    const path = props.currentPath;
+  render({ props }) {
+    const path = props['current-path'];
+    const isAuth = props['is-authenticated'];
+    const isDark = props['is-dark'];
+    const userName = props['user-name'];
 
     const isActive = (href: string): string => {
       if (href === '/') return path === '/' ? 'active' : '';
       return path.startsWith(href) ? 'active' : '';
     };
 
-    const authLinks = props.isAuthenticated
+    const authLinks = isAuth
       ? html`
           <a href="/dashboard" class="${isActive('/dashboard')}">Dashboard</a>
           <a href="/settings" class="${isActive('/settings')}">Settings</a>
         `
       : html` <a href="/login" class="${isActive('/login')}">Login</a> `;
 
-    const themeIcon = props.isDark ? '☀️' : '🌙';
+    const themeIcon = isDark ? '☀️' : '🌙';
 
-    const userBadge = props.isAuthenticated
+    const userBadge = isAuth
       ? html`<span class="user-badge">
-          <strong>${props.userName}</strong>
+          <strong>${userName}</strong>
         </span>`
       : '';
 
@@ -195,11 +244,7 @@ component<{
 
         <div class="nav-right">
           ${userBadge}
-          <button
-            class="theme-toggle"
-            aria-label="Toggle theme"
-            onclick="${() => emit('toggle-theme')}"
-          >
+          <button class="theme-toggle" aria-label="Toggle theme">
             ${themeIcon}
           </button>
         </div>

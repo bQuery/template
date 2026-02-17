@@ -141,15 +141,15 @@ export function renderDashboardPage(container: HTMLElement): {
           id="dashboard-task-list"
           class="divide-y divide-gray-100 dark:divide-gray-700"
         >
-          <template bq-for="task in tasks">
             <li
+              bq-for="task in tasks"
               class="flex items-center gap-3 py-3"
               bq-bind:data-flip-key="task.id"
             >
               <input
                 type="checkbox"
                 bq-bind:checked="task.done"
-                bq-on:change="toggleTask(task.id)"
+                bq-on:change="toggleTask(task.value.id)"
                 class="w-4 h-4 text-indigo-600 rounded border-gray-300
                        focus:ring-indigo-500 dark:border-gray-600"
               />
@@ -159,21 +159,20 @@ export function renderDashboardPage(container: HTMLElement): {
                 class="flex-1 text-sm text-gray-700 dark:text-gray-300"
               ></span>
               <button
-                bq-on:click="removeTask(task.id)"
+                bq-on:click="removeTask(task.value.id)"
                 class="text-gray-400 hover:text-red-500 transition-colors text-sm"
               >
                 ✕
               </button>
             </li>
-          </template>
         </ul>
       </div>
     </page-container>
   `;
 
   const view = mount(container, {
-    userName: authStore.userName,
-    count: counterStore.count,
+    userName: computed(() => authStore.userName),
+    count: computed(() => counterStore.count),
     completedTasks,
     totalTasks,
     progressPercent,

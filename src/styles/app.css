@@ -1,11 +1,13 @@
 @import 'tailwindcss';
 
+/* Use class-based dark mode strategy (toggle .dark on <html>) */
+@variant dark (&:where(.dark, .dark *));
+
 /*
  * Custom Tailwind theme extensions for the bQuery template.
  * Uses Tailwind CSS v4 @theme directive for custom tokens.
  */
-
-:root {
+@theme {
   --color-primary-50: #eef2ff;
   --color-primary-100: #e0e7ff;
   --color-primary-200: #c7d2fe;
