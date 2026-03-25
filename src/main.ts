@@ -160,7 +160,7 @@ async function bootstrap(): Promise<void> {
       const toast = showToast({
         message: notif.message,
         variant: notif.type,
-        duration: notif.duration,
+        duration: notif.duration ?? 5000,
       });
 
       toast.addEventListener(
