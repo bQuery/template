@@ -1,6 +1,6 @@
 # @bQuery/template
 
-Production-ready frontend template for building single-page applications with **[bQuery.js](https://github.com/nicokempe/bquery)**, **TypeScript**, and **Tailwind CSS v4**.
+Production-ready frontend template for building single-page applications with **[@bquery/bquery](https://github.com/bQuery/bquery)** as the framework, **[@bquery/ui](https://github.com/bQuery/ui)** as the component library, **TypeScript**, and **Tailwind CSS v4**.
 
 This project serves as a reference implementation that demonstrates **all 9 bQuery modules** in a realistic SPA with routing, authentication, state management, animations, and web components.
 
@@ -9,7 +9,7 @@ This project serves as a reference implementation that demonstrates **all 9 bQue
 - **TypeScript** strict mode — zero type errors
 - **Tailwind CSS v4** with custom theme tokens and dark mode
 - **6 routes** with lazy loading and code-splitting
-- **8 custom web components** (buttons, cards, modals, notifications, navbar, layouts)
+- **@bquery/ui** imported once to provide reusable `bq-*` Web Components and toast notifications
 - **4 reactive stores** (app, auth, counter, settings — including a persisted store)
 - **3 services** (storage, API, auth)
 - **Navigation guards** for protected routes
@@ -25,7 +25,7 @@ This project serves as a reference implementation that demonstrates **all 9 bQue
 | ------------- | -------------------------------------------------------------------------------------------------------------- | -------------------------------------- |
 | **Core**      | `$()`, `$$()`, `ready()`                                                                                       | Utilities, component internals         |
 | **Reactive**  | `signal()`, `computed()`, `effect()`, `batch()`                                                                | Pages, stores, main.ts                 |
-| **Component** | `component()`, `html`, `safeHtml`                                                                              | 8 web components in `src/components/`  |
+| **Component** | `@bquery/ui` import-based registration for `bq-*` Web Components                                               | `main.ts`, `home.page.ts`, toast rendering |
 | **Motion**    | `spring()`, `transition()`, `springPresets`                                                                    | Page transitions, counter animation    |
 | **Security**  | `sanitize()`, `escapeHtml`                                                                                     | About page, login form, sanitize utils |
 | **Platform**  | `storage.local()`, `notifications`                                                                             | Auth service, settings page            |
@@ -45,7 +45,7 @@ template/
 ├── public/
 │   └── favicon.svg               # App icon
 └── src/
-    ├── main.ts                   # Application bootstrap
+    ├── main.ts                   # Application bootstrap + @bquery/ui registration
     ├── router.ts                 # Route definitions & guards
     ├── vite-env.d.ts             # Vite client types
     ├── styles/
@@ -67,18 +67,7 @@ template/
     │   ├── animation.utils.ts    # Motion helper functions
     │   ├── dom.utils.ts          # DOM utility functions
     │   └── sanitize.utils.ts     # Security sanitization helpers
-    ├── components/
-    │   ├── base/
-    │   │   └── base.component.ts # Shared component utilities
-    │   ├── layout/
-    │   │   ├── app-shell.component.ts
-    │   │   └── page-container.component.ts
-    │   └── ui/
-    │       ├── button.component.ts
-    │       ├── card.component.ts
-    │       ├── modal.component.ts
-    │       ├── navbar.component.ts
-    │       └── notification.component.ts
+    ├── components/               # Local reference components (not used by the core bootstrap)
     └── pages/
         ├── home.page.ts          # Counter + two-way binding demo
         ├── about.page.ts         # Sanitization demo + tech info
@@ -137,14 +126,13 @@ Serves the production build locally.
 ```text
 ┌───────────────────────────────────────────────────────────────────┐
 │ index.html (#app)                                                 │
-│  └─ <app-shell>                                                   │
-│      ├─ <app-navbar>                                              │
-│      ├─ Root bq-* directive bindings (global route/filter state) │
+│  └─ #app-layout                                                   │
+│      ├─ Header / nav with root bq-* directive bindings           │
 │      ├─ #router-outlet                                            │
 │      │   └─ Router renders page modules                           │
 │      │      ├─ Home / About / Dashboard / Login / Settings / 404 │
-│      │      └─ Each page mounts local View context               │
-│      └─ #notification-stack                                       │
+│      │      └─ Pages use @bquery/ui + local View context         │
+│      └─ @bquery/ui toast container (created on demand)           │
 └───────────────────────────────────────────────────────────────────┘
 
 Data flow:
@@ -168,7 +156,7 @@ Routes are defined in `src/router.ts` using `createRouter()`. Pages are lazy-loa
 
 ### Components
 
-All web components use bQuery's `component()` API with Shadow DOM, typed props with validators, and scoped styles. A shared `base.component.ts` provides common style constants and utility functions.
+The template core imports `@bquery/ui` once in `main.ts`, which registers the library's `bq-*` custom elements globally. Pages then consume those elements directly (for example `bq-card` on the home page), while notifications are rendered through the library's imperative toast API.
 
 ### Security
 
@@ -181,7 +169,7 @@ User-generated content is sanitized using bQuery's `sanitize()` and `escapeHtml(
     serialization.
 - **Reactive**: Used throughout stores/pages (`signal`, `computed`,
     `effect`, `batch`, `watch`, `readonly`).
-- **Component**: Reusable Web Components in `src/components/**`.
+- **Component**: `@bquery/ui` components registered in `main.ts` and consumed in page templates.
 - **Motion**: Route transitions, springs, and FLIP task-list animation.
 - **Security**: Sanitization/escaping in about, home, and dashboard/login.
 - **Platform**: Local persistence and browser notifications.
@@ -193,10 +181,11 @@ User-generated content is sanitized using bQuery's `sanitize()` and `escapeHtml(
 
 | Tool                                          | Version |
 | --------------------------------------------- | ------- |
-| [bQuery](https://github.com/nicokempe/bquery) | 1.4.0   |
+| [@bquery/bquery](https://github.com/bQuery/bquery) | ^1.6.0  |
+| [@bquery/ui](https://github.com/bQuery/ui)         | ^1.0.0  |
 | [TypeScript](https://www.typescriptlang.org/) | 5.x     |
 | [Tailwind CSS](https://tailwindcss.com/)      | 4.x     |
-| [Vite](https://vite.dev/)                     | 6.x     |
+| [Vite](https://vite.dev/)                     | 7.x     |
 | [Bun](https://bun.sh/)                        | ≥ 1.0   |
 
 ## License
