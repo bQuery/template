@@ -114,7 +114,7 @@ async function bootstrap(): Promise<void> {
   const stopRouteWatch = watch(
     routePath,
     () => {
-      $('#router-outlet').scrollTo({ behavior: 'smooth', block: 'start' });
+      $('#router-outlet').scrollTo({ behavior: 'smooth' });
       $$('#router-outlet, #app-layout').addClass('route-transitioning');
       setTimeout(() => {
         $$('#router-outlet, #app-layout').removeClass('route-transitioning');
