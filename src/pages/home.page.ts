@@ -476,7 +476,9 @@ export function renderHomePage(container: HTMLElement): {
         <bq-card title="🧩 Components — Web Components">
           <div class="space-y-3 text-sm">
             <p class="text-gray-500 dark:text-gray-400">
-              The template now pulls its reusable UI primitives from `@bquery/ui`, which registers `bq-*` Web Components via import side effects.
+              The template now pulls its reusable UI primitives from
+              <code>@bquery/ui</code>, which registers <code>bq-*</code>
+              Web Components via import side effects.
             </p>
             <div class="grid sm:grid-cols-2 gap-2 text-xs font-mono">
               <div class="p-2 bg-gray-50 dark:bg-gray-900 dark:text-gray-300 rounded">&lt;bq-card title="..."&gt;</div>
