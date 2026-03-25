@@ -39,7 +39,7 @@ export function renderAboutPage(container: HTMLElement): {
   const showPreview = signal(true);
 
   container.innerHTML = /* html */ `
-    <page-container>
+    <div class="page-container">
       <section class="mb-12 animate-target">
         <h1 class="text-3xl font-extrabold text-gray-900 dark:text-white mb-4">
           About bQuery Template
@@ -133,7 +133,7 @@ export function renderAboutPage(container: HTMLElement): {
           </div>
         </div>
       </section>
-    </page-container>
+    </div>
   `;
 
   // Animate sections on mount

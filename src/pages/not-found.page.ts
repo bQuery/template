@@ -21,7 +21,7 @@ export function renderNotFoundPage(container: HTMLElement): {
   setPageTitle('Page Not Found');
 
   container.innerHTML = /* html */ `
-    <page-container>
+    <div class="page-container">
       <div class="flex flex-col items-center justify-center min-h-[60vh] text-center">
         <p class="error-number text-8xl font-extrabold text-indigo-500 mb-4">
           404
@@ -41,7 +41,7 @@ export function renderNotFoundPage(container: HTMLElement): {
           ← Back to Home
         </a>
       </div>
-    </page-container>
+    </div>
   `;
 
   // Animate the error number on mount

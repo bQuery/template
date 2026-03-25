@@ -62,7 +62,7 @@ export function renderDashboardPage(container: HTMLElement): {
   });
 
   container.innerHTML = /* html */ `
-    <page-container>
+    <div class="page-container">
       <div class="flex items-center justify-between mb-8">
         <div>
           <h1 class="text-3xl font-extrabold text-gray-900 dark:text-white">
@@ -167,7 +167,7 @@ export function renderDashboardPage(container: HTMLElement): {
             </li>
         </ul>
       </div>
-    </page-container>
+    </div>
   `;
 
   const view = mount(container, {
