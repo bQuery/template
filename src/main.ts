@@ -13,7 +13,7 @@ import './styles/app.css';
 import '@bquery/ui';
 
 // Framework imports
-import { $, $$ } from '@bquery/bquery/core';
+import { $ } from '@bquery/bquery/core';
 import {
   batch,
   computed,
@@ -115,10 +115,6 @@ async function bootstrap(): Promise<void> {
     routePath,
     () => {
       $('#router-outlet').scrollTo({ behavior: 'smooth' });
-      $$('#router-outlet, #app-layout').addClass('route-transitioning');
-      setTimeout(() => {
-        $$('#router-outlet, #app-layout').removeClass('route-transitioning');
-      }, 180);
     },
     { immediate: true }
   );
