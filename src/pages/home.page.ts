@@ -5,7 +5,7 @@
  * - **Reactive** signals with the counter store
  * - **View** directives (`bq-text`, `bq-on:click`, `bq-class`)
  * - **Motion** spring animations on the counter button
- * - **Component** usage of `<ui-card>` and `<ui-button>`
+ * - **Component** usage of `@bquery/ui` components such as `<bq-card>`
  */
 
 import { counterStore } from '@/stores/counter.store';
@@ -117,7 +117,7 @@ export function renderHomePage(container: HTMLElement): {
   });
 
   container.innerHTML = /* html */ `
-    <page-container>
+    <div class="page-container">
       <section class="text-center mb-12">
         <h1 class="text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white sm:text-5xl">
           Welcome to <span class="text-indigo-500">bQuery</span>
@@ -130,7 +130,7 @@ export function renderHomePage(container: HTMLElement): {
 
       <!-- Counter Demo -->
       <section class="mb-12">
-        <ui-card card-title="Reactive Counter" hoverable>
+        <bq-card title="Reactive Counter">
           <div class="flex items-center justify-center gap-6 py-4">
             <button
               bq-on:click="decrement"
@@ -164,12 +164,12 @@ export function renderHomePage(container: HTMLElement): {
               Reset
             </button>
           </div>
-        </ui-card>
+        </bq-card>
       </section>
 
       <!-- Two-Way Binding Demo -->
       <section class="mb-12">
-        <ui-card card-title="Two-Way Binding Demo" hoverable>
+        <bq-card title="Two-Way Binding Demo">
           <div class="space-y-4">
             <div>
               <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -197,7 +197,7 @@ export function renderHomePage(container: HTMLElement): {
               </p>
             </div>
           </div>
-        </ui-card>
+        </bq-card>
       </section>
 
       <!-- Module Overview Cards -->
@@ -206,24 +206,24 @@ export function renderHomePage(container: HTMLElement): {
           Core Modules
         </h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <ui-card card-title="⚡ Reactive" hoverable>
+          <bq-card title="⚡ Reactive">
             <p>Signals, computed values, effects, and batched updates for fine-grained reactivity.</p>
-          </ui-card>
-          <ui-card card-title="🧩 Components" hoverable>
+          </bq-card>
+          <bq-card title="🧩 Components">
             <p>Web Components with Shadow DOM, props validation, and lifecycle hooks.</p>
-          </ui-card>
-          <ui-card card-title="🛣️ Router" hoverable>
+          </bq-card>
+          <bq-card title="🛣️ Router">
             <p>SPA router with history API, dynamic segments, guards, and reactive route state.</p>
-          </ui-card>
-          <ui-card card-title="📦 Store" hoverable>
+          </bq-card>
+          <bq-card title="📦 Store">
             <p>Signal-based state management with getters, actions, and optional persistence.</p>
-          </ui-card>
-          <ui-card card-title="🎬 Motion" hoverable>
+          </bq-card>
+          <bq-card title="🎬 Motion">
             <p>View Transitions, spring physics, FLIP animations, timelines, and scroll animations.</p>
-          </ui-card>
-          <ui-card card-title="🔒 Security" hoverable>
+          </bq-card>
+          <bq-card title="🔒 Security">
             <p>HTML sanitization, XSS protection, CSP helpers, and Trusted Types support.</p>
-          </ui-card>
+          </bq-card>
         </div>
       </section>
 
@@ -239,7 +239,7 @@ export function renderHomePage(container: HTMLElement): {
         </p>
 
         <!-- ──────── 1. Core API ──────── -->
-        <ui-card card-title="🔧 Core — Selectors, DOM & Events" hoverable>
+        <bq-card title="🔧 Core — Selectors, DOM & Events">
           <div class="space-y-5 text-sm">
             <div id="core-demo-box" class="rounded border border-dashed border-indigo-300 dark:border-indigo-700 p-3">
               <p id="core-status" class="dark:text-gray-300">Core demo booting…</p>
@@ -284,10 +284,10 @@ export function renderHomePage(container: HTMLElement): {
               <p id="util-output" class="mt-2 text-xs text-gray-500 dark:text-gray-400 font-mono"></p>
             </div>
           </div>
-        </ui-card>
+        </bq-card>
 
         <!-- ──────── 2. Reactive ──────── -->
-        <ui-card card-title="⚡ Reactive — Signals, Effects & Watch" hoverable>
+        <bq-card title="⚡ Reactive — Signals, Effects & Watch">
           <div class="space-y-5 text-sm">
             <p class="text-gray-500 dark:text-gray-400">
               The counter above uses signal(), computed(), batch(), and watch(). Additional reactive features:
@@ -317,10 +317,10 @@ export function renderHomePage(container: HTMLElement): {
               <p bq-text="typeGuardInfo" class="font-mono text-xs p-2 rounded bg-gray-50 dark:bg-gray-900 dark:text-gray-300"></p>
             </div>
           </div>
-        </ui-card>
+        </bq-card>
 
         <!-- ──────── 3. View Directives ──────── -->
-        <ui-card card-title="📋 View — Declarative Directives" hoverable>
+        <bq-card title="📋 View — Declarative Directives">
           <div class="space-y-5 text-sm">
             <p class="text-gray-500 dark:text-gray-400">
               bq-text, bq-html, bq-model, and bq-if are demonstrated above. More directives:
@@ -360,10 +360,10 @@ export function renderHomePage(container: HTMLElement): {
               <button type="button" bq-on:click="shuffleFruits" class="rounded bg-indigo-600 px-3 py-1 text-white text-xs">Shuffle List</button>
             </div>
           </div>
-        </ui-card>
+        </bq-card>
 
         <!-- ──────── 4. Motion ──────── -->
-        <ui-card card-title="🎬 Motion — Animations & Springs" hoverable>
+        <bq-card title="🎬 Motion — Animations & Springs">
           <div class="space-y-5 text-sm">
             <div>
               <h3 class="font-semibold text-gray-700 dark:text-gray-300 mb-2">animate() with keyframePresets</h3>
@@ -389,10 +389,10 @@ export function renderHomePage(container: HTMLElement): {
               </div>
             </div>
           </div>
-        </ui-card>
+        </bq-card>
 
         <!-- ──────── 5. Security ──────── -->
-        <ui-card card-title="🔒 Security — Sanitization & Escaping" hoverable>
+        <bq-card title="🔒 Security — Sanitization & Escaping">
           <div class="space-y-4 text-sm">
             <div>
               <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Enter HTML to process:</label>
@@ -414,10 +414,10 @@ export function renderHomePage(container: HTMLElement): {
               </div>
             </div>
           </div>
-        </ui-card>
+        </bq-card>
 
         <!-- ──────── 6. Platform ──────── -->
-        <ui-card card-title="🌐 Platform — Storage & Notifications" hoverable>
+        <bq-card title="🌐 Platform — Storage & Notifications">
           <div class="space-y-5 text-sm">
             <div>
               <h3 class="font-semibold text-gray-700 dark:text-gray-300 mb-2">storage.local() — Key/Value</h3>
@@ -438,10 +438,10 @@ export function renderHomePage(container: HTMLElement): {
               <p bq-text="notificationStatus" class="text-xs text-gray-500 dark:text-gray-400 mt-1"></p>
             </div>
           </div>
-        </ui-card>
+        </bq-card>
 
         <!-- ──────── 7. Store ──────── -->
-        <ui-card card-title="📦 Store — State Management" hoverable>
+        <bq-card title="📦 Store — State Management">
           <div class="space-y-4 text-sm">
             <p class="text-gray-500 dark:text-gray-400">
               The counter uses createStore(). Interact with store methods:
@@ -453,10 +453,10 @@ export function renderHomePage(container: HTMLElement): {
             </div>
             <p bq-text="storeLog" class="font-mono text-xs p-2 rounded bg-gray-50 dark:bg-gray-900 dark:text-gray-300"></p>
           </div>
-        </ui-card>
+        </bq-card>
 
         <!-- ──────── 8. Router ──────── -->
-        <ui-card card-title="🛣️ Router — SPA Navigation" hoverable>
+        <bq-card title="🛣️ Router — SPA Navigation">
           <div class="space-y-4 text-sm">
             <p class="text-gray-500 dark:text-gray-400">
               The app uses createRouter() with lazy-loaded pages, guards, and view transitions.
@@ -470,27 +470,29 @@ export function renderHomePage(container: HTMLElement): {
               <button type="button" bq-on:click="navSettings" class="rounded bg-indigo-600 px-3 py-1 text-white text-xs">navigate('/settings')</button>
             </div>
           </div>
-        </ui-card>
+        </bq-card>
 
         <!-- ──────── 9. Components ──────── -->
-        <ui-card card-title="🧩 Components — Web Components" hoverable>
+        <bq-card title="🧩 Components — Web Components">
           <div class="space-y-3 text-sm">
             <p class="text-gray-500 dark:text-gray-400">
-              Every UI element on this page is a bQuery Web Component with Shadow DOM, typed props, and lifecycle hooks.
+              The template now pulls its reusable UI primitives from
+              <code>@bquery/ui</code>, which registers <code>bq-*</code>
+              Web Components via import side effects.
             </p>
             <div class="grid sm:grid-cols-2 gap-2 text-xs font-mono">
-              <div class="p-2 bg-gray-50 dark:bg-gray-900 dark:text-gray-300 rounded">&lt;ui-card card-title="..." hoverable&gt;</div>
-              <div class="p-2 bg-gray-50 dark:bg-gray-900 dark:text-gray-300 rounded">&lt;ui-button variant="primary"&gt;</div>
-              <div class="p-2 bg-gray-50 dark:bg-gray-900 dark:text-gray-300 rounded">&lt;ui-modal modal-title="..."&gt;</div>
-              <div class="p-2 bg-gray-50 dark:bg-gray-900 dark:text-gray-300 rounded">&lt;ui-navbar current-path="/"&gt;</div>
+              <div class="p-2 bg-gray-50 dark:bg-gray-900 dark:text-gray-300 rounded">&lt;bq-card title="..."&gt;</div>
+              <div class="p-2 bg-gray-50 dark:bg-gray-900 dark:text-gray-300 rounded">&lt;bq-button variant="primary"&gt;</div>
+              <div class="p-2 bg-gray-50 dark:bg-gray-900 dark:text-gray-300 rounded">&lt;bq-dialog open&gt;</div>
+              <div class="p-2 bg-gray-50 dark:bg-gray-900 dark:text-gray-300 rounded">import '@bquery/ui'</div>
             </div>
             <p class="text-xs text-gray-400">
-              Built with component(), html(), safeHtml(). Supports props validation, lifecycle hooks (connected, disconnected, updated, onError), and custom events via emit().
+              Components are imported once and then used as framework-agnostic custom elements alongside bQuery view directives and stores.
             </p>
           </div>
-        </ui-card>
+        </bq-card>
       </section>
-    </page-container>
+    </div>
   `;
 
   // ── Imperative Core API Setup ──

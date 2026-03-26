@@ -2,26 +2,18 @@
  * @file Application entry point.
  *
  * Bootstraps the entire bQuery template application:
- * 1. Registers all Web Components
+ * 1. Registers all `@bquery/ui` components
  * 2. Hydrates authentication state from storage
  * 3. Initializes the router
  * 4. Mounts the root reactive view
- * 5. Sets up theme, navigation, and notification rendering
+ * 5. Sets up theme, navigation, and toast notifications
  */
 
 import './styles/app.css';
-
-// Register Web Components (side-effect imports)
-import './components/layout/app-shell.component';
-import './components/layout/page-container.component';
-import './components/ui/button.component';
-import './components/ui/card.component';
-import './components/ui/modal.component';
-import './components/ui/navbar.component';
-import './components/ui/notification.component';
+import '@bquery/ui';
 
 // Framework imports
-import { $, $$ } from '@bquery/bquery/core';
+import { $ } from '@bquery/bquery/core';
 import {
   batch,
   computed,
@@ -32,6 +24,7 @@ import {
 } from '@bquery/bquery/reactive';
 import { currentRoute, interceptLinks } from '@bquery/bquery/router';
 import { mount } from '@bquery/bquery/view';
+import { showToast } from '@bquery/ui/components/toast';
 
 // Application modules
 import { setupRouter } from './router';
@@ -63,6 +56,10 @@ async function bootstrap(): Promise<void> {
   const globalFilter = signal('');
   const routePath = computed(() => currentRoute.value.path);
   const isAuthenticated = computed(() => authStore.isAuthenticated);
+  const isGuest = computed(() => !authStore.isAuthenticated);
+  const userName = computed(() => authStore.userName);
+  const isDarkMode = computed(() => appStore.isDarkMode);
+  const isLightMode = computed(() => !appStore.isDarkMode);
   const routeLinks = signal([
     { path: '/', label: 'Home' },
     { path: '/about', label: 'About' },
@@ -86,6 +83,10 @@ async function bootstrap(): Promise<void> {
   mount('#app', {
     routePath,
     isAuthenticated,
+    isGuest,
+    userName,
+    isDarkMode,
+    isLightMode,
     globalFilter,
     quickLinks,
     readonlyFilter: readonly(globalFilter),
@@ -100,24 +101,9 @@ async function bootstrap(): Promise<void> {
     document.documentElement.classList.toggle('dark', isDark);
   });
 
-  // 6. Reactive navbar update
-  effect(() => {
-    const path = currentRoute.value.path;
-    const user = authStore.userName;
-    const isAuth = authStore.isAuthenticated;
-    const isDark = appStore.isDarkMode;
-
-    const navbar = document.querySelector('app-navbar');
-    if (navbar) {
-      navbar.setAttribute('current-path', path);
-      navbar.setAttribute('user-name', user);
-      navbar.setAttribute('is-authenticated', String(isAuth));
-      navbar.setAttribute('is-dark', String(isDark));
-    }
-  });
-
-  // 7. Listen for theme toggle from navbar
-  document.addEventListener('toggle-theme', () => {
+  // 6. Listen for theme toggles from the root layout
+  const themeToggle = document.getElementById('theme-toggle');
+  themeToggle?.addEventListener('click', () => {
     batch(() => {
       appStore.toggleTheme();
       settingsStore.setTheme(appStore.theme);
@@ -128,11 +114,7 @@ async function bootstrap(): Promise<void> {
   const stopRouteWatch = watch(
     routePath,
     () => {
-      $('#router-outlet').scrollTo({ behavior: 'smooth', block: 'start' });
-      $$('#router-outlet, app-shell').addClass('route-transitioning');
-      setTimeout(() => {
-        $$('#router-outlet, app-shell').removeClass('route-transitioning');
-      }, 180);
+      $('#router-outlet').scrollTo({ behavior: 'smooth' });
     },
     { immediate: true }
   );
@@ -156,25 +138,35 @@ async function bootstrap(): Promise<void> {
 
   document.addEventListener('component-error', onComponentError);
 
-  // 8. Reactive notification rendering
+  // 7. Reactive notification rendering via @bquery/ui toast API
+  const activeToastIds = new Set<string>();
   effect(() => {
     const notifs = appStore.notifications;
-    const stack = document.getElementById('notification-stack');
-    if (!stack) return;
+    const nextIds = new Set(notifs.map((notif) => notif.id));
 
-    stack.innerHTML = notifs
-      .map(
-        (n: { type: string; message: string }) =>
-          `<ui-notification variant="${n.type}" message="${n.message}"></ui-notification>`
-      )
-      .join('');
+    activeToastIds.forEach((id) => {
+      if (!nextIds.has(id)) activeToastIds.delete(id);
+    });
 
-    // Attach dismiss handlers
-    stack.querySelectorAll('ui-notification').forEach((el, i) => {
-      el.addEventListener('dismiss', () => {
-        const notif = notifs[i];
-        if (notif) appStore.removeNotification(notif.id);
+    notifs.forEach((notif) => {
+      if (activeToastIds.has(notif.id)) return;
+
+      activeToastIds.add(notif.id);
+
+      const toast = showToast({
+        message: notif.message,
+        variant: notif.type,
+        duration: notif.duration ?? 5000,
       });
+
+      toast.addEventListener(
+        'bq-close',
+        () => {
+          activeToastIds.delete(notif.id);
+          appStore.removeNotification(notif.id);
+        },
+        { once: true }
+      );
     });
   });
 

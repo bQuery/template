@@ -39,7 +39,7 @@ export function renderSettingsPage(container: HTMLElement): {
   );
 
   container.innerHTML = /* html */ `
-    <page-container>
+    <div class="page-container">
       <h1 class="text-3xl font-extrabold text-gray-900 dark:text-white mb-8">
         Settings
       </h1>
@@ -166,7 +166,7 @@ export function renderSettingsPage(container: HTMLElement): {
           Settings are automatically saved and persisted across page reloads.
         </p>
       </div>
-    </page-container>
+    </div>
   `;
 
   // Sync settings-store theme changes with app store

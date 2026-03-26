@@ -5,7 +5,8 @@
     "": {
       "name": "@bquery/template",
       "dependencies": {
-        "@bquery/bquery": "latest",
+        "@bquery/bquery": "^1.6.0",
+        "@bquery/ui": "^1.0.0",
       },
       "devDependencies": {
         "@tailwindcss/vite": "^4.1.18",
@@ -16,7 +17,9 @@
     },
   },
   "packages": {
-    "@bquery/bquery": ["@bquery/bquery@1.4.0", "", {}, "sha512-a0/w70oI3lAdLUXFNrZhXFgVbTnB+YEwxlV3hpbfL1ckSgBogzmPaEayjo+h7JHQL2y1n5iianyzkLCBgJSqfA=="],
+    "@bquery/bquery": ["@bquery/bquery@1.6.0", "", {}, "sha512-1useGYuuHQB2VIT5UW4ptrZ6tc9xO8UVX++R7o3qAlYjyx3n4tbSj4SqtcUPjiLxnVHNi8uYo4/tWqQnfY6UEg=="],
+
+    "@bquery/ui": ["@bquery/ui@1.0.0", "", { "peerDependencies": { "@bquery/bquery": "^1.6.0" } }, "sha512-gXIopOURrZ4tcLBrFqhyfj79u1EIzhuXJfK/nxDG3d1HwNPaUpy5X8dAvrveGcIxPUmFMs/9tNYYh/iJAtDqig=="],
 
     "@esbuild/aix-ppc64": ["@esbuild/aix-ppc64@0.27.3", "", { "os": "aix", "cpu": "ppc64" }, "sha512-9fJMTNFTWZMh5qwrBItuziu834eOCUcEqymSH7pY+zoMVEZg3gcPuBNxH1EvfVYe9h0x/Ptw8KBzv7qxb7l8dg=="],
 

@@ -74,3 +74,16 @@ html.dark body {
 #router-outlet {
   min-height: calc(100vh - 3.5rem);
 }
+
+.page-container {
+  width: 100%;
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+@media (max-width: 640px) {
+  .page-container {
+    padding: 1.25rem 1rem;
+  }
+}

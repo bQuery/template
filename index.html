@@ -12,42 +12,114 @@
   </head>
   <body>
     <div id="app">
-      <!-- App Shell — provides navbar + main content area -->
-      <app-shell>
-        <app-navbar slot="navbar"></app-navbar>
+      <div
+        id="app-layout"
+        class="flex min-h-screen flex-col bg-gray-50 text-gray-900 transition-colors dark:bg-slate-950 dark:text-slate-50"
+      >
+        <header
+          class="sticky top-0 z-50 border-b border-gray-200 bg-white/95 backdrop-blur dark:border-slate-800 dark:bg-slate-950/95"
+        >
+          <div
+            class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-6 py-4 sm:px-4"
+          >
+            <a href="/" class="text-xl font-extrabold tracking-tight text-indigo-600">
+              bQuery
+            </a>
 
-        <!-- Root directive demo (index.html-level bQuery bindings) -->
-        <section class="px-4 py-2 text-xs text-gray-500 dark:text-gray-400">
-          <p>
-            Route: <span bq-text="routePath"></span>
-            <span bq-if="isAuthenticated">· Authenticated</span>
-          </p>
-          <div class="mt-1">
-            <label class="sr-only" for="global-filter">Quick filter</label>
-            <input
-              id="global-filter"
-              bq-model="globalFilter"
-              placeholder="Quick filter"
-              class="w-full sm:w-64 rounded border border-gray-300 px-2 py-1 text-xs dark:border-gray-700 dark:bg-gray-900"
-            />
-          </div>
-          <ul class="mt-1 flex flex-wrap gap-2">
-            <template bq-for="item in quickLinks">
-              <li
-                bq-class="{ 'font-semibold text-indigo-500': item.path === routePath }"
+            <nav class="flex flex-wrap items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+              <a
+                href="/"
+                class="rounded px-3 py-1.5 transition-colors hover:bg-gray-100 dark:hover:bg-slate-800"
+                bq-class="{ 'bg-indigo-50 font-semibold text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-300': routePath === '/' }"
               >
-                <a bq-bind:href="item.path" bq-text="item.label"></a>
-              </li>
-            </template>
-          </ul>
-        </section>
+                Home
+              </a>
+              <a
+                href="/about"
+                class="rounded px-3 py-1.5 transition-colors hover:bg-gray-100 dark:hover:bg-slate-800"
+                bq-class="{ 'bg-indigo-50 font-semibold text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-300': routePath.startsWith('/about') }"
+              >
+                About
+              </a>
+              <a
+                bq-if="isAuthenticated"
+                href="/dashboard"
+                class="rounded px-3 py-1.5 transition-colors hover:bg-gray-100 dark:hover:bg-slate-800"
+                bq-class="{ 'bg-indigo-50 font-semibold text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-300': routePath.startsWith('/dashboard') }"
+              >
+                Dashboard
+              </a>
+              <a
+                bq-if="isAuthenticated"
+                href="/settings"
+                class="rounded px-3 py-1.5 transition-colors hover:bg-gray-100 dark:hover:bg-slate-800"
+                bq-class="{ 'bg-indigo-50 font-semibold text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-300': routePath.startsWith('/settings') }"
+              >
+                Settings
+              </a>
+              <a
+                bq-if="isGuest"
+                href="/login"
+                class="rounded px-3 py-1.5 transition-colors hover:bg-gray-100 dark:hover:bg-slate-800"
+                bq-class="{ 'bg-indigo-50 font-semibold text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-300': routePath.startsWith('/login') }"
+              >
+                Login
+              </a>
+            </nav>
 
-        <!-- Router outlet — pages are rendered here -->
-        <div id="router-outlet"></div>
+            <div class="flex items-center gap-3 text-sm">
+              <span
+                bq-if="isAuthenticated"
+                class="hidden text-gray-500 dark:text-gray-400 sm:inline"
+              >
+                Signed in as
+                <span bq-text="userName" class="font-semibold text-gray-900 dark:text-white"></span>
+              </span>
+              <button
+                id="theme-toggle"
+                type="button"
+                aria-label="Toggle theme"
+                bq-bind:aria-pressed="isDarkMode ? 'true' : 'false'"
+                class="rounded border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:border-slate-700 dark:text-gray-200 dark:hover:bg-slate-800"
+              >
+                <span bq-if="isDarkMode">☀️ Light</span>
+                <span bq-if="isLightMode">🌙 Dark</span>
+              </button>
+            </div>
+          </div>
+        </header>
 
-        <!-- Notification stack -->
-        <div id="notification-stack" slot="notifications"></div>
-      </app-shell>
+        <main class="flex-1">
+          <!-- Root directive demo (index.html-level bQuery bindings) -->
+          <section class="mx-auto max-w-6xl px-6 py-3 text-xs text-gray-500 dark:text-gray-400 sm:px-4">
+            <p>
+              Route: <span bq-text="routePath"></span>
+              <span bq-if="isAuthenticated">· Authenticated</span>
+            </p>
+            <div class="mt-1">
+              <label class="sr-only" for="global-filter">Quick filter</label>
+              <input
+                id="global-filter"
+                bq-model="globalFilter"
+                placeholder="Quick filter"
+                class="w-full rounded border border-gray-300 px-2 py-1 text-xs sm:w-64 dark:border-gray-700 dark:bg-gray-900"
+              />
+            </div>
+            <ul class="mt-1 flex flex-wrap gap-2">
+              <template bq-for="item in quickLinks">
+                <li
+                  bq-class="{ 'font-semibold text-indigo-500': item.path === routePath }"
+                >
+                  <a bq-bind:href="item.path" bq-text="item.label"></a>
+                </li>
+              </template>
+            </ul>
+          </section>
+
+          <!-- Router outlet — pages are rendered here -->
+          <div id="router-outlet"></div>
+        </main>
+      </div>
     </div>
 
     <!-- Application entry point -->

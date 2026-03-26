@@ -44,7 +44,7 @@ export function renderLoginPage(container: HTMLElement): {
   const hasError = computed(() => errorMessage.value.length > 0);
 
   container.innerHTML = /* html */ `
-    <page-container>
+    <div class="page-container">
       <div class="max-w-md mx-auto mt-12">
         <div class="text-center mb-8">
           <h1 class="text-3xl font-extrabold text-gray-900 dark:text-white">
@@ -123,7 +123,7 @@ export function renderLoginPage(container: HTMLElement): {
           </p>
         </div>
       </div>
-    </page-container>
+    </div>
   `;
 
   const view = mount(container, {
