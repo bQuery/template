@@ -2,7 +2,7 @@
 
 Production-ready frontend template for building single-page applications with **[@bquery/bquery](https://github.com/bQuery/bquery)** as the framework, **[@bquery/ui](https://github.com/bQuery/ui)** as the component library, **TypeScript**, and **Tailwind CSS v4**.
 
-This project serves as a reference implementation that demonstrates **9 bQuery modules** in a realistic SPA with routing, authentication, state management, animations, and web components.
+This project serves as a reference implementation that demonstrates **9 bQuery modules used throughout the template** in a realistic SPA with routing, authentication, state management, animations, and web components.
 
 ## Features
 
