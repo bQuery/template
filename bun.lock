@@ -5,7 +5,7 @@
     "": {
       "name": "@bquery/template",
       "dependencies": {
-        "@bquery/bquery": "^1.6.0",
+        "@bquery/bquery": "^1.7.0",
         "@bquery/ui": "^1.0.0",
       },
       "devDependencies": {
@@ -17,7 +17,7 @@
     },
   },
   "packages": {
-    "@bquery/bquery": ["@bquery/bquery@1.6.0", "", {}, "sha512-1useGYuuHQB2VIT5UW4ptrZ6tc9xO8UVX++R7o3qAlYjyx3n4tbSj4SqtcUPjiLxnVHNi8uYo4/tWqQnfY6UEg=="],
+    "@bquery/bquery": ["@bquery/bquery@1.7.0", "", {}, "sha512-V3YdGTHbMzvYSiSHnx50bRlQNXR/Cnjwn19jauu5PJu/fDp9eiCOtKIzajQN2qpt09TW1I2yqvnTB7qIlWStUQ=="],
 
     "@bquery/ui": ["@bquery/ui@1.0.0", "", { "peerDependencies": { "@bquery/bquery": "^1.6.0" } }, "sha512-gXIopOURrZ4tcLBrFqhyfj79u1EIzhuXJfK/nxDG3d1HwNPaUpy5X8dAvrveGcIxPUmFMs/9tNYYh/iJAtDqig=="],
 
