@@ -20,7 +20,7 @@
   "author": "bQuery",
   "license": "MIT",
   "dependencies": {
-    "@bquery/bquery": "^1.6.0",
+    "@bquery/bquery": "^1.7.0",
     "@bquery/ui": "^1.0.0"
   },
   "devDependencies": {
