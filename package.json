@@ -20,8 +20,8 @@
   "author": "bQuery",
   "license": "MIT",
   "dependencies": {
-    "@bquery/bquery": "^1.7.0",
-    "@bquery/ui": "^1.0.0"
+    "@bquery/bquery": "^1.9.0",
+    "@bquery/ui": "^1.9.0"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.18",

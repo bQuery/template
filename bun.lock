@@ -5,8 +5,8 @@
     "": {
       "name": "@bquery/template",
       "dependencies": {
-        "@bquery/bquery": "^1.7.0",
-        "@bquery/ui": "^1.0.0",
+        "@bquery/bquery": "^1.9.0",
+        "@bquery/ui": "^1.9.0",
       },
       "devDependencies": {
         "@tailwindcss/vite": "^4.1.18",
@@ -17,9 +17,9 @@
     },
   },
   "packages": {
-    "@bquery/bquery": ["@bquery/bquery@1.7.0", "", {}, "sha512-V3YdGTHbMzvYSiSHnx50bRlQNXR/Cnjwn19jauu5PJu/fDp9eiCOtKIzajQN2qpt09TW1I2yqvnTB7qIlWStUQ=="],
+    "@bquery/bquery": ["@bquery/bquery@1.9.0", "", {}, "sha512-LrUY5axBZUGSPzZt46O19gqiYY0CX9nGfKTz5pt4gVZAKRYkr7FOEPtp4QlhfKoT6hCjZ5JqiMd/RhjEI1rErA=="],
 
-    "@bquery/ui": ["@bquery/ui@1.0.0", "", { "peerDependencies": { "@bquery/bquery": "^1.6.0" } }, "sha512-gXIopOURrZ4tcLBrFqhyfj79u1EIzhuXJfK/nxDG3d1HwNPaUpy5X8dAvrveGcIxPUmFMs/9tNYYh/iJAtDqig=="],
+    "@bquery/ui": ["@bquery/ui@1.9.0", "", { "peerDependencies": { "@bquery/bquery": "^1.9.0" } }, "sha512-soLxgLSZr8HMPFf0sE8+kRDXHQjw0V4ZUX/aGNBoY98ztaQzmh1/xImqUSJCTUh+L1ce2PIRw/rUyhLA7BRfIQ=="],
 
     "@esbuild/aix-ppc64": ["@esbuild/aix-ppc64@0.27.3", "", { "os": "aix", "cpu": "ppc64" }, "sha512-9fJMTNFTWZMh5qwrBItuziu834eOCUcEqymSH7pY+zoMVEZg3gcPuBNxH1EvfVYe9h0x/Ptw8KBzv7qxb7l8dg=="],
 
