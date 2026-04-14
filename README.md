@@ -181,8 +181,8 @@ User-generated content is sanitized using bQuery's `sanitize()` and `escapeHtml(
 
 | Tool                                          | Version |
 | --------------------------------------------- | ------- |
-| [@bquery/bquery](https://github.com/bQuery/bquery) | ^1.7.0  |
-| [@bquery/ui](https://github.com/bQuery/ui)         | ^1.0.0  |
+| [@bquery/bquery](https://github.com/bQuery/bquery) | ^1.9.0  |
+| [@bquery/ui](https://github.com/bQuery/ui)         | ^1.9.0  |
 | [TypeScript](https://www.typescriptlang.org/) | 5.x     |
 | [Tailwind CSS](https://tailwindcss.com/)      | 4.x     |
 | [Vite](https://vite.dev/)                     | 7.x     |
